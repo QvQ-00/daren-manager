@@ -144,6 +144,7 @@
         .btn-export { background: #27ae60; color: white; }
         .btn-add { background: #667eea; color: white; }
         .btn-toggle { background: #95a5a6; color: white; }
+        .btn-import-csv { background: #3498db; color: white; }
         
         .table-panel {
             background: white; padding: 16px; border-radius: 10px;
@@ -218,7 +219,6 @@
         .note-cell { max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 9px; color: #636e72; cursor: pointer; }
         .note-cell:hover { white-space: normal; overflow: visible; background: #fffde7; padding: 2px 3px; border-radius: 3px; position: relative; z-index: 10; }
         
-        /* 弹窗 */
         .modal-overlay {
             display: none; position: fixed; top:0; left:0; width:100%; height:100%;
             background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
@@ -236,7 +236,6 @@
         .modal textarea:focus { outline: none; border-color: #667eea; }
         .modal .btn-row { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
         
-        /* 统计面板 */
         .stat-panel {
             background: white; padding: 20px; border-radius: 10px;
             box-shadow: 0 1px 6px rgba(0,0,0,0.04);
@@ -272,7 +271,7 @@
     <div class="container">
         <div class="header">
             <h1>📋 达人执行进度管理</h1>
-            <div class="subtitle">智能导入 · 多节点提醒 · 快递素材追踪 · 数据筛查</div>
+            <div class="subtitle">智能导入 · 多节点提醒 · 快递素材追踪 · 数据筛查 · CSV导入导出</div>
         </div>
         
         <div class="stats-bar">
@@ -288,7 +287,6 @@
         </div>
         
         <div class="main-content" id="mainContent">
-            <!-- 表单面板 -->
             <div class="form-panel" id="formPanel">
                 <h3 id="formTitle">➕ 新增达人任务</h3>
                 <button class="btn btn-import" onclick="showImportModal()">📋 智能导入确认单</button>
@@ -381,7 +379,6 @@
                 <button class="btn" style="background:#95a5a6;color:white;width:100%;margin-top:4px;" onclick="cancelEdit()" id="btnCancel" hidden>取消编辑</button>
             </div>
             
-            <!-- 表格面板 -->
             <div class="table-panel" id="tablePanel">
                 <h3 id="tableTitle">📊 紧急提醒 - 全部达人</h3>
                 <div class="filter-bar">
@@ -393,6 +390,7 @@
                     <input type="text" id="filterSearch" placeholder="🔍 搜索昵称..." oninput="renderTable()">
                     <button class="btn btn-sm btn-toggle" onclick="toggleDoneRows()" id="btnToggleDone">📂 折叠已完成</button>
                     <button class="btn btn-sm btn-export" onclick="exportCSV()">📥 导出CSV</button>
+                    <button class="btn btn-sm btn-import-csv" onclick="importCSV()">📥 导入CSV</button>
                     <button class="btn btn-sm btn-add" onclick="scrollToForm()">➕ 新增</button>
                 </div>
                 <div id="tableContainer" style="overflow-x:auto;">
@@ -405,7 +403,6 @@
                 </div>
             </div>
             
-            <!-- 统计面板 -->
             <div class="stat-panel" id="statPanel" style="display:none;flex:1;min-width:700px;">
                 <h3>📊 数据筛查</h3>
                 <div class="stat-filters">
@@ -433,7 +430,6 @@
         </div>
     </div>
     
-    <!-- 智能导入弹窗 -->
     <div class="modal-overlay" id="importModal">
         <div class="modal">
             <h3>📋 智能导入确认单</h3>
@@ -447,7 +443,7 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'creator_records_v6';
+        const STORAGE_KEY = 'creator_records_v7';
         let currentTab = 'urgent';
         let doneCollapsed = false;
         
@@ -494,32 +490,38 @@
         }
         
         function getPublishDate(record) {
-            if (!record.timeline || !record.timeline['publish']) return null;
-            return record.timeline['publish'].date || record.publishDate || null;
+            if (record.publishDate) return record.publishDate;
+            if (record.timeline && record.timeline['publish'] && record.timeline['publish'].date) {
+                return record.timeline['publish'].date;
+            }
+            return null;
         }
         
+        // 快递状态：已寄出但未寄回，基于发布时间判断
         function getExpressStatus(record) {
             if (record.sentBack === '是') return 'done';
-            if (!areAllNodesDone(record)) return 'normal';
+            if (record.sentOut !== '是') return 'normal';
             const pubDate = getPublishDate(record);
             if (!pubDate) return 'normal';
             const today = new Date(); today.setHours(0,0,0,0);
             const pDate = new Date(pubDate); pDate.setHours(0,0,0,0);
             const diffDays = Math.floor((today - pDate) / (1000*60*60*24));
             if (diffDays > 3) return 'danger';
-            return 'warning';
+            if (diffDays >= 0) return 'warning';
+            return 'normal';
         }
         
+        // 素材状态：基于发布时间判断
         function getMaterialStatus(record) {
             if (record.materialReceived === '是') return 'done';
-            if (!areAllNodesDone(record)) return 'normal';
             const pubDate = getPublishDate(record);
             if (!pubDate) return 'normal';
             const today = new Date(); today.setHours(0,0,0,0);
             const pDate = new Date(pubDate); pDate.setHours(0,0,0,0);
             const diffDays = Math.floor((today - pDate) / (1000*60*60*24));
             if (diffDays > 3) return 'danger';
-            return 'warning';
+            if (diffDays >= 0) return 'warning';
+            return 'normal';
         }
         
         function getRecordOverallStatus(record) {
@@ -529,14 +531,16 @@
             const nodes = getTimelineNodes(record.creatorType);
             const allDone = areAllNodesDone(record);
             
-            if (allDone) {
-                const es = getExpressStatus(record);
-                const ms = getMaterialStatus(record);
-                if (es === 'danger' || ms === 'danger') return 'danger';
-                if (es === 'warning' || ms === 'warning') return 'warning';
-                return 'done';
-            }
+            // 优先检查快递和素材（基于发布时间，不要求所有节点完成）
+            const es = getExpressStatus(record);
+            const ms = getMaterialStatus(record);
+            if (es === 'danger' || ms === 'danger') return 'danger';
+            if (es === 'warning' || ms === 'warning') return 'warning';
             
+            // 全部节点完成且快递素材都OK
+            if (allDone && es === 'done' && ms === 'done') return 'done';
+            
+            // 检查节点超期
             if (record.timeline) {
                 for (const n of nodes) {
                     const nd = record.timeline[n.key];
@@ -556,7 +560,7 @@
             let earliest = Infinity;
             
             if (status === 'danger') {
-                if (record.timeline) {
+                if (record.timeline && !areAllNodesDone(record)) {
                     for (const n of nodes) {
                         const nd = record.timeline[n.key];
                         if (nd && nd.date && !nd.done && getNodeStatus(nd.date) === 'danger') {
@@ -616,15 +620,12 @@
             dateInput.style.opacity = cb.checked ? '0.5' : '1';
         }
         
-        // 昵称自动带出
         document.getElementById('nickname').addEventListener('change', function() {
             const name = this.value.trim();
             if (!name || document.getElementById('editId').value) return;
             const records = getRecords();
             const found = records.find(r => r.nickname === name);
-            if (found) {
-                fillFormFromRecord(found);
-            }
+            if (found) fillFormFromRecord(found);
         });
         
         function fillFormFromRecord(r) {
@@ -671,7 +672,6 @@
             return timeline;
         }
         
-        // ============ 智能导入 ============
         function showImportModal() {
             document.getElementById('importModal').classList.add('show');
             document.getElementById('importText').focus();
@@ -685,20 +685,18 @@
             const text = document.getElementById('importText').value.trim();
             if (!text) { alert('请粘贴确认单内容'); return; }
             
-            // 解析规则
             const extract = (pattern) => {
                 const match = text.match(pattern);
                 return match ? match[1].trim() : '';
             };
             
             const nickname = extract(/账号[：:]\s*(.+)/) || extract(/昵称[：:]\s*(.+)/);
-            const platform = extract(/需求平台[：:]\s*(.+)/) || extract(/平台[：:]\s*(.+)/);
+            const platformStr = extract(/需求平台[：:]\s*(.+)/) || extract(/平台[：:]\s*(.+)/);
             const brand = extract(/品牌名称[：:]\s*(.+)/) || extract(/品牌[：:]\s*(.+)/);
             const profileUrl = extract(/主页链接[：:]\s*(.+)/) || extract(/链接[：:]\s*(.+)/);
             const followers = extract(/粉丝量[：:]\s*(.+)/);
             const execPrice = extract(/执行价[：:]\s*(.+)/);
             
-            // 发布档期
             const publishDateMatch = text.match(/发布档期[：:].*?(\d+\.\d+)/) || text.match(/最快发布档期[：:].*?(\d+\.\d+)/);
             let publishDate = '';
             if (publishDateMatch) {
@@ -707,29 +705,20 @@
                 publishDate = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
             }
             
-            // 达人类型
             const typeMatch = text.match(/报备[：:]?\s*(图文|视频)/);
             let creatorType = '';
-            if (typeMatch) {
-                creatorType = typeMatch[1] === '视频' ? '视频达人' : '图文达人';
-            }
+            if (typeMatch) creatorType = typeMatch[1] === '视频' ? '视频达人' : '图文达人';
             
-            // 快递地址
             const addressMatch = text.match(/收件地址[：:]\s*([\s\S]+?)(?:\n\n|\n[^\s]|$)/);
-            let addressInfo = '';
-            if (addressMatch) {
-                addressInfo = addressMatch[1].replace(/\n/g, ' ').trim();
-            }
+            let addressInfo = addressMatch ? addressMatch[1].replace(/\n/g, ' ').trim() : '';
             
-            // 备注：合作须知部分
             const notesMatch = text.match(/【合作须知】([\s\S]+?)$/);
             let notes = notesMatch ? notesMatch[1].trim() : '';
             
-            // 填入表单
             document.getElementById('nickname').value = nickname;
-            if (platform.includes('小红书')) document.getElementById('platform').value = '小红书';
-            else if (platform.includes('抖音')) document.getElementById('platform').value = '抖音';
-            else document.getElementById('platform').value = platform;
+            if (platformStr.includes('小红书')) document.getElementById('platform').value = '小红书';
+            else if (platformStr.includes('抖音')) document.getElementById('platform').value = '抖音';
+            else document.getElementById('platform').value = platformStr;
             
             document.getElementById('brand').value = brand;
             document.getElementById('followers').value = followers;
@@ -740,7 +729,6 @@
             if (creatorType) {
                 document.getElementById('creatorType').value = creatorType;
                 updateTimelineForm();
-                // 把发布档期填入发布时间节点
                 if (publishDate) {
                     setTimeout(() => {
                         const pubEl = document.getElementById('node_publish');
@@ -749,7 +737,6 @@
                 }
             }
             
-            // 备注合并地址和合作须知
             let fullNotes = '';
             if (addressInfo) fullNotes += '📮收件信息：' + addressInfo + '\n';
             if (notes) fullNotes += '📋合作须知：\n' + notes;
@@ -759,7 +746,6 @@
             document.getElementById('formPanel').scrollIntoView({behavior:'smooth'});
         }
         
-        // ============ 标签切换 ============
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -928,25 +914,21 @@
                         expressBadge = '<span style="color:#ccc;">未寄</span>';
                     } else if (r.sentBack === '是') {
                         expressBadge = '<span class="express-status express-yes">📬 已回</span>';
-                    } else if (allDone) {
+                    } else {
                         const es = getExpressStatus(r);
                         if (es === 'danger') expressBadge = '<span class="express-status express-no">🔴 待回收</span>';
                         else if (es === 'warning') expressBadge = '<span class="express-status express-warning">🟡 待回收</span>';
                         else expressBadge = '📦 已寄';
-                    } else {
-                        expressBadge = '📦 已寄';
                     }
                     
                     let materialBadge = '';
                     if (r.materialReceived === '是') {
                         materialBadge = '<span class="material-status material-yes">✅ 已给</span>';
-                    } else if (allDone) {
+                    } else {
                         const ms = getMaterialStatus(r);
                         if (ms === 'danger') materialBadge = '<span class="material-status material-no">🔴 待给</span>';
                         else if (ms === 'warning') materialBadge = '<span class="material-status material-warning">🟡 待给</span>';
-                        else materialBadge = '<span class="badge badge-purple">待给</span>';
-                    } else {
-                        materialBadge = '<span class="badge badge-purple">未到</span>';
+                        else materialBadge = '<span class="badge badge-purple">未到</span>';
                     }
                     
                     const noteText = r.notes || '';
@@ -1007,24 +989,18 @@
             document.getElementById('brandList').innerHTML = brands.map(b=>`<option value="${b}">`).join('');
         }
         
-        // ============ 数据筛查 ============
         function buildStatFilters() {
             const records = getRecords();
-            // 收集所有月份
             const months = new Set();
             records.forEach(r => {
                 const pubDate = getPublishDate(r);
-                if (pubDate) {
-                    months.add(pubDate.substring(0,7)); // 2025-07
-                }
+                if (pubDate) months.add(pubDate.substring(0,7));
             });
             const sortedMonths = [...months].sort();
-            const monthSelect = document.getElementById('statMonth');
-            monthSelect.innerHTML = '<option value="">全部月份</option>' + sortedMonths.map(m => `<option value="${m}">${m}</option>`).join('');
+            document.getElementById('statMonth').innerHTML = '<option value="">全部月份</option>' + sortedMonths.map(m => `<option value="${m}">${m}</option>`).join('');
             
             const brands = [...new Set(records.map(r=>r.brand))].sort();
-            const brandSelect = document.getElementById('statBrand');
-            brandSelect.innerHTML = '<option value="">全部品牌</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
+            document.getElementById('statBrand').innerHTML = '<option value="">全部品牌</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
         }
         
         function runStats() {
@@ -1043,22 +1019,15 @@
                 return true;
             });
             
-            // 统计卡片
             const total = filtered.length;
             const doneCount = filtered.filter(r => getRecordOverallStatus(r) === 'done').length;
             const activeCount = total - doneCount;
             
-            // 品牌分布
             const brandCount = {};
-            filtered.forEach(r => {
-                brandCount[r.brand] = (brandCount[r.brand] || 0) + 1;
-            });
+            filtered.forEach(r => { brandCount[r.brand] = (brandCount[r.brand] || 0) + 1; });
             
-            // 类型分布
             const typeCount = {};
-            filtered.forEach(r => {
-                typeCount[r.creatorType] = (typeCount[r.creatorType] || 0) + 1;
-            });
+            filtered.forEach(r => { typeCount[r.creatorType] = (typeCount[r.creatorType] || 0) + 1; });
             
             document.getElementById('statResult').innerHTML = `
                 <div class="stat-result-card"><div class="big">${total}</div><div class="small">筛选结果</div></div>
@@ -1066,11 +1035,9 @@
                 <div class="stat-result-card"><div class="big" style="color:#e74c3c;">${activeCount}</div><div class="small">进行中</div></div>
             `;
             
-            // 品牌明细表
             let detailHtml = '<h4 style="margin-bottom:8px;">品牌分布</h4>';
             detailHtml += '<table class="stat-detail-table"><thead><tr><th>品牌</th><th>数量</th></tr></thead><tbody>';
-            const sortedBrands = Object.entries(brandCount).sort((a,b) => b[1]-a[1]);
-            sortedBrands.forEach(([brand, count]) => {
+            Object.entries(brandCount).sort((a,b) => b[1]-a[1]).forEach(([brand, count]) => {
                 detailHtml += `<tr><td>${brand}</td><td>${count}</td></tr>`;
             });
             detailHtml += '</tbody></table>';
@@ -1105,29 +1072,12 @@
             
             if (filtered.length === 0) { alert('没有匹配数据'); return; }
             
-            const headers = ['昵称','平台','类型','品牌','粉丝量','执行价','发布档期','状态','寄回','素材','备注'];
-            const rows = filtered.map(r => {
-                const sm = {'danger':'需处理','warning':'需关注','done':'已完成','normal':'正常','paused':'暂停','terminated':'终止'};
-                return [
-                    r.nickname, r.platform, r.creatorType, r.brand,
-                    r.followers||'', r.execPrice||'', getPublishDate(r)||'',
-                    sm[getRecordOverallStatus(r)]||'正常',
-                    r.sentBack==='是'?'已回':'未回',
-                    r.materialReceived==='是'?'已给':'未给',
-                    r.notes||''
-                ];
-            });
+            const headers = ['昵称','平台','类型','品牌','粉丝量','执行价','主页链接','发布档期','大纲','大纲完成','脚本','脚本完成','图文初稿','图文初稿完成','视频初稿','视频初稿完成','发布时间','发布时间完成','寄出','寄回','单号','素材','合作状态','备注'];
+            const rows = filtered.map(r => exportRecordToRow(r));
             
-            const BOM='\uFEFF';
-            const csv=BOM+[headers,...rows].map(row=>row.map(c=>`"${c}"`).join(',')).join('\n');
-            const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-            const url=URL.createObjectURL(blob);
-            const a=document.createElement('a');
-            a.href=url; a.download=`数据筛查_${new Date().toISOString().split('T')[0]}.csv`;
-            a.click(); URL.revokeObjectURL(url);
+            downloadCSV([headers, ...rows], `数据筛查_${new Date().toISOString().split('T')[0]}.csv`);
         }
         
-        // ============ 保存/编辑/删除 ============
         function saveRecord() {
             const nickname = document.getElementById('nickname').value.trim();
             const platform = document.getElementById('platform').value;
@@ -1171,34 +1121,7 @@
         function editRecord(index) {
             const records = getRecords();
             const r = records[index];
-            document.getElementById('nickname').value = r.nickname;
-            document.getElementById('platform').value = r.platform;
-            document.getElementById('creatorType').value = r.creatorType;
-            updateTimelineForm();
-            setTimeout(() => {
-                if (r.timeline) {
-                    for (const key in r.timeline) {
-                        const dateEl = document.getElementById('node_'+key);
-                        const doneEl = document.getElementById('done_'+key);
-                        if (dateEl) dateEl.value = r.timeline[key].date || '';
-                        if (doneEl) {
-                            doneEl.checked = r.timeline[key].done || false;
-                            if (doneEl.checked && dateEl) dateEl.style.opacity = '0.5';
-                        }
-                    }
-                }
-            }, 100);
-            document.getElementById('brand').value = r.brand;
-            document.getElementById('followers').value = r.followers || '';
-            document.getElementById('profileUrl').value = r.profileUrl || '';
-            document.getElementById('execPrice').value = r.execPrice || '';
-            document.getElementById('publishDate').value = r.publishDate || '';
-            document.getElementById('coopStatus').value = r.coopStatus || '正常合作';
-            document.getElementById('sentOut').value = r.sentOut || '否';
-            document.getElementById('sentBack').value = r.sentBack || '否';
-            document.getElementById('trackingNumber').value = r.trackingNumber || '';
-            document.getElementById('materialReceived').value = r.materialReceived || '否';
-            document.getElementById('notes').value = r.notes || '';
+            fillFormFromRecord(r);
             document.getElementById('editId').value = index;
             document.getElementById('formTitle').textContent = '✏️ 编辑达人任务';
             document.getElementById('btnCancel').hidden = false;
@@ -1243,34 +1166,122 @@
             document.getElementById('formPanel').scrollIntoView({behavior:'smooth'});
         }
         
+        function exportRecordToRow(r) {
+            const tl = r.timeline || {};
+            return [
+                r.nickname, r.platform, r.creatorType, r.brand,
+                r.followers||'', r.execPrice||'', r.profileUrl||'', r.publishDate||'',
+                (tl.outline||{}).date||'', (tl.outline||{}).done?'是':'否',
+                (tl.script||{}).date||'', (tl.script||{}).done?'是':'否',
+                (tl.draft||{}).date||'', (tl.draft||{}).done?'是':'否',
+                (tl.videoDraft||{}).date||'', (tl.videoDraft||{}).done?'是':'否',
+                (tl.publish||{}).date||'', (tl.publish||{}).done?'是':'否',
+                r.sentOut||'否', r.sentBack||'否', r.trackingNumber||'', r.materialReceived||'否',
+                r.coopStatus||'正常合作', r.notes||''
+            ];
+        }
+        
+        function downloadCSV(rows, filename) {
+            const BOM='\uFEFF';
+            const csv=BOM+rows.map(row=>row.map(c=>`"${c}"`).join(',')).join('\n');
+            const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+            const url=URL.createObjectURL(blob);
+            const a=document.createElement('a');
+            a.href=url; a.download=filename;
+            a.click(); URL.revokeObjectURL(url);
+        }
+        
         function exportCSV() {
             const records = getRecords();
             if(records.length===0){alert('没有数据可导出');return;}
             const headers = ['昵称','平台','类型','品牌','粉丝量','执行价','主页链接','发布档期','大纲','大纲完成','脚本','脚本完成','图文初稿','图文初稿完成','视频初稿','视频初稿完成','发布时间','发布时间完成','寄出','寄回','单号','素材','合作状态','备注'];
-            const rows = records.map(r=>{
-                const tl = r.timeline || {};
-                return [
-                    r.nickname, r.platform, r.creatorType, r.brand,
-                    r.followers||'', r.execPrice||'', r.profileUrl||'', r.publishDate||'',
-                    (tl.outline||{}).date||'', (tl.outline||{}).done?'是':'否',
-                    (tl.script||{}).date||'', (tl.script||{}).done?'是':'否',
-                    (tl.draft||{}).date||'', (tl.draft||{}).done?'是':'否',
-                    (tl.videoDraft||{}).date||'', (tl.videoDraft||{}).done?'是':'否',
-                    (tl.publish||{}).date||'', (tl.publish||{}).done?'是':'否',
-                    r.sentOut||'否', r.sentBack||'否', r.trackingNumber||'', r.materialReceived||'否',
-                    r.coopStatus||'正常合作', r.notes||''
-                ];
-            });
-            const BOM='\uFEFF';
-            const csv=BOM+[headers,...rows].map(row=>row.map(c=>`"${c}"`).join(',')).join('\n');
-            const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-            const url=URL.createObjectURL(blob);
-            const a=document.createElement('a');
-            a.href=url; a.download=`达人执行进度_${new Date().toISOString().split('T')[0]}.csv`;
-            a.click(); URL.revokeObjectURL(url);
+            const rows = records.map(r => exportRecordToRow(r));
+            downloadCSV([headers, ...rows], `达人执行进度_${new Date().toISOString().split('T')[0]}.csv`);
         }
         
-        // ============ 初始化 ============
+        function importCSV() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const text = ev.target.result;
+                    const lines = text.split('\n').filter(l => l.trim());
+                    if (lines.length < 2) { alert('CSV文件为空'); return; }
+                    
+                    // 解析CSV（支持引号包裹的字段）
+                    function parseCSVLine(line) {
+                        const result = [];
+                        let current = '';
+                        let inQuotes = false;
+                        for (let i = 0; i < line.length; i++) {
+                            const ch = line[i];
+                            if (ch === '"') {
+                                inQuotes = !inQuotes;
+                            } else if (ch === ',' && !inQuotes) {
+                                result.push(current.trim());
+                                current = '';
+                            } else {
+                                current += ch;
+                            }
+                        }
+                        result.push(current.trim());
+                        return result;
+                    }
+                    
+                    const headers = parseCSVLine(lines[0]);
+                    const newRecords = [];
+                    
+                    for (let i = 1; i < lines.length; i++) {
+                        const values = parseCSVLine(lines[i]);
+                        if (values.length < 24) continue; // 跳过不完整的行
+                        
+                        const record = {
+                            nickname: values[0] || '',
+                            platform: values[1] || '',
+                            creatorType: values[2] || '',
+                            brand: values[3] || '',
+                            followers: values[4] || '',
+                            execPrice: values[5] || '',
+                            profileUrl: values[6] || '',
+                            publishDate: values[7] || '',
+                            timeline: {},
+                            sentOut: values[18] || '否',
+                            sentBack: values[19] || '否',
+                            trackingNumber: values[20] || '',
+                            materialReceived: values[21] || '否',
+                            coopStatus: values[22] || '正常合作',
+                            notes: values[23] || '',
+                            createdAt: new Date().toISOString()
+                        };
+                        
+                        if (values[8]) record.timeline['outline'] = { date: values[8], done: values[9] === '是' };
+                        if (values[10]) record.timeline['script'] = { date: values[10], done: values[11] === '是' };
+                        if (values[12]) record.timeline['draft'] = { date: values[12], done: values[13] === '是' };
+                        if (values[14]) record.timeline['videoDraft'] = { date: values[14], done: values[15] === '是' };
+                        if (values[16]) record.timeline['publish'] = { date: values[16], done: values[17] === '是' };
+                        
+                        newRecords.push(record);
+                    }
+                    
+                    if (newRecords.length === 0) { alert('未解析到数据，请确认CSV格式正确'); return; }
+                    
+                    const choice = confirm('点"确定"追加到现有数据后面\n点"取消"覆盖现有数据');
+                    const records = choice ? [...getRecords(), ...newRecords] : newRecords;
+                    saveRecords(records);
+                    renderTabs();
+                    if (currentTab === 'stats') { buildStatFilters(); runStats(); }
+                    else renderTable();
+                    alert(`成功导入 ${newRecords.length} 条记录`);
+                };
+                reader.readAsText(file, 'UTF-8');
+            };
+            input.click();
+        }
+        
         updateTimelineForm();
         renderTabs();
         renderTable();
@@ -1278,8 +1289,8 @@
             if (currentTab !== 'stats') renderTable();
         }, 60000);
         
-        console.log('✅ 达人执行进度管理系统 v6 已就绪');
-        console.log('📌 智能导入 | 数据筛查 | 粉丝量/执行价 | 快递素材追踪');
+        console.log('✅ 达人执行进度管理系统 v7 已就绪');
+        console.log('📌 修复：快递素材基于发布时间提醒 | 新增：CSV导入导出完全匹配');
     </script>
 </body>
 </html>
