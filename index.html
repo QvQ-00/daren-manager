@@ -5,423 +5,1000 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>达人执行进度管理</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        :root {
+            --blue: #0077BE;
+            --light-bg: #E8F4F8;
+            --mint: #8BD3C7;
+            --mint-dark: #6db5a9;
+            --white: #ffffff;
+            --text: #1a1a2e;
+            --text-light: #5a6a7a;
+            --red: #e74c3c;
+            --red-bg: #fff0f0;
+            --yellow: #f0a500;
+            --yellow-bg: #fffdf0;
+            --green: #27ae60;
+            --green-bg: #f0faf5;
+            --gray: #e8ecf1;
+            --gray-text: #8c9aa8;
+            --radius: 10px;
+            --radius-sm: 6px;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            --font: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
-            background: #f5f6fa;
-            color: #2d3436;
-            padding: 15px;
+            font-family: var(--font);
+            background: #f5f7fa;
+            color: var(--text);
+            padding: 18px;
             font-size: 13px;
+            line-height: 1.5;
+            min-height: 100vh;
         }
-        
-        .container { max-width: 100%; margin: 0 auto; }
-        
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; padding: 18px 22px; border-radius: 12px;
-            margin-bottom: 12px; box-shadow: 0 4px 16px rgba(102,126,234,0.2);
+            background: linear-gradient(135deg, #0077BE 0%, #005a8c 100%);
+            color: white;
+            padding: 20px 24px;
+            border-radius: var(--radius);
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0, 119, 190, 0.15);
         }
-        .header h1 { font-size: 20px; margin-bottom: 2px; }
-        .header .subtitle { opacity: 0.9; font-size: 12px; }
-        
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .header .subtitle {
+            opacity: 0.85;
+            font-size: 11px;
+            font-weight: 400;
+        }
+        .header-right {
+            text-align: right;
+            font-size: 11px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* Stats */
         .stats-bar {
-            display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
         }
         .stat-card {
-            background: white; padding: 10px 15px; border-radius: 8px;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.04); flex:1; min-width:90px;
-            text-align: center; transition: transform 0.2s;
+            background: var(--white);
+            padding: 12px 18px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            flex: 1;
+            min-width: 85px;
+            text-align: center;
+            transition: transform 0.15s;
+            border: 1px solid #eef1f5;
         }
-        .stat-card:hover { transform: translateY(-1px); }
-        .stat-card .number { font-size: 22px; font-weight: bold; }
-        .stat-card .label { font-size: 10px; color: #636e72; }
-        .stat-card.danger .number { color: #e74c3c; }
-        .stat-card.warning .number { color: #f39c12; }
-        .stat-card.total .number { color: #667eea; }
-        .stat-card.done .number { color: #27ae60; }
-        
+        .stat-card:hover {
+            transform: translateY(-1px);
+        }
+        .stat-card .number {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .stat-card .label {
+            font-size: 10px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+        .stat-card.danger .number {
+            color: var(--red);
+        }
+        .stat-card.warning .number {
+            color: var(--yellow);
+        }
+        .stat-card.total .number {
+            color: var(--blue);
+        }
+        .stat-card.done .number {
+            color: var(--green);
+        }
+
+        /* Tabs */
         .tabs-nav {
-            display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap;
-            background: white; padding: 5px; border-radius: 8px;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            background: var(--white);
+            padding: 5px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #eef1f5;
         }
         .tab-btn {
-            padding: 7px 12px; border: none; border-radius: 6px;
-            font-size: 11px; font-weight: 600; cursor: pointer;
-            background: transparent; color: #636e72; transition: all 0.2s;
-            font-family: inherit; white-space: nowrap;
+            padding: 8px 14px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-light);
+            transition: all 0.2s;
+            font-family: inherit;
+            white-space: nowrap;
         }
-        .tab-btn:hover { background: #f0f0f5; }
+        .tab-btn:hover {
+            background: var(--light-bg);
+            color: var(--blue);
+        }
         .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--blue);
             color: white;
         }
-        .tab-btn.urgent-tab { color: #e74c3c; font-weight: 700; }
+        .tab-btn.urgent-tab {
+            color: var(--red);
+        }
         .tab-btn.urgent-tab.active {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            background: var(--red);
             color: white;
         }
-        .tab-btn.stat-tab { color: #27ae60; font-weight: 700; }
+        .tab-btn.recycle-tab {
+            color: var(--yellow);
+        }
+        .tab-btn.recycle-tab.active {
+            background: var(--yellow);
+            color: white;
+        }
+        .tab-btn.stat-tab {
+            color: var(--green);
+        }
         .tab-btn.stat-tab.active {
-            background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+            background: var(--green);
             color: white;
         }
         .brand-count {
-            font-size: 9px; background: #eee; border-radius: 5px;
-            padding: 1px 5px; margin-left: 2px;
+            font-size: 9px;
+            background: #eef1f5;
+            border-radius: 8px;
+            padding: 1px 6px;
+            margin-left: 3px;
+            font-weight: 500;
         }
-        .tab-btn.active .brand-count { background: rgba(255,255,255,0.3); }
-        
-        .main-content { display: flex; gap: 12px; flex-wrap: wrap; }
-        
-        .form-panel {
-            background: white; padding: 16px; border-radius: 10px;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.04); flex: 0 0 370px;
-            position: sticky; top: 15px; align-self: flex-start; max-height: 90vh; overflow-y: auto;
+        .tab-btn.active .brand-count {
+            background: rgba(255, 255, 255, 0.3);
         }
-        .form-panel h3 {
-            margin-bottom: 12px; font-size: 14px;
-            border-bottom: 2px solid #667eea; padding-bottom: 6px;
+
+        /* Main Layout */
+        .main-content {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: flex-start;
         }
-        .form-group { margin-bottom: 8px; }
+
+        /* Left Panel */
+        .left-panel {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            flex: 0 0 380px;
+            position: sticky;
+            top: 15px;
+            border: 1px solid #eef1f5;
+            overflow: hidden;
+        }
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid #eef1f5;
+            background: #fafbfc;
+        }
+        .panel-tab {
+            flex: 1;
+            padding: 11px 8px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+            font-family: inherit;
+            transition: all 0.2s;
+            text-align: center;
+            border-bottom: 2px solid transparent;
+        }
+        .panel-tab:hover {
+            color: var(--blue);
+            background: #f8f9fb;
+        }
+        .panel-tab.active {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+            background: white;
+        }
+        .panel-content {
+            padding: 16px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+        .panel-content.hidden {
+            display: none;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 10px;
+        }
         .form-group label {
-            display: block; margin-bottom: 3px; font-weight: 600;
-            font-size: 10px; color: #636e72;
+            display: block;
+            margin-bottom: 3px;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--text-light);
+            letter-spacing: 0.3px;
         }
-        .form-group select, .form-group input, .form-group textarea {
-            width: 100%; padding: 6px 8px; border: 2px solid #e0e0e0;
-            border-radius: 6px; font-size: 11px; font-family: inherit;
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #e8ecf1;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background: #fafbfc;
+        }
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 119, 190, 0.06);
+        }
+        .form-group textarea {
+            min-height: 50px;
             resize: vertical;
+            font-size: 11px;
         }
-        .form-group textarea { min-height: 45px; font-size: 10px; }
-        .form-group select:focus, .form-group input:focus, .form-group textarea:focus {
-            outline: none; border-color: #667eea;
+        .form-row {
+            display: flex;
+            gap: 10px;
         }
-        .form-row { display: flex; gap: 8px; }
-        .form-row .form-group { flex: 1; }
-        
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* Timeline */
         .timeline-section {
-            background: #f8f9ff; border-radius: 8px; padding: 10px;
-            margin-top: 6px; margin-bottom: 6px;
+            background: var(--light-bg);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #dceaf0;
         }
         .timeline-section h4 {
-            font-size: 11px; color: #667eea; margin-bottom: 8px;
+            font-size: 11px;
+            color: var(--blue);
+            margin-bottom: 10px;
+            font-weight: 600;
         }
         .node-row {
-            display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
-            background: white; padding: 6px 8px; border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 7px;
+            background: white;
+            padding: 7px 10px;
+            border-radius: var(--radius-sm);
         }
         .node-label {
-            font-weight: 600; font-size: 10px; min-width: 48px; color: #2d3436;
+            font-weight: 600;
+            font-size: 10px;
+            min-width: 55px;
+            color: var(--text);
         }
         .node-date {
-            flex: 1; padding: 4px 6px; border: 2px solid #e0e0e0;
-            border-radius: 4px; font-size: 10px; font-family: inherit;
+            flex: 1;
+            padding: 6px 8px;
+            border: 2px solid #e8ecf1;
+            border-radius: 4px;
+            font-size: 10px;
+            font-family: inherit;
         }
-        .node-date:focus { outline: none; border-color: #667eea; }
-        
+        .node-date:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        /* Buttons */
         .btn {
-            padding: 8px 14px; border: none; border-radius: 6px;
-            font-size: 12px; font-weight: 600; cursor: pointer;
-            transition: all 0.3s; font-family: inherit;
+            padding: 9px 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; width: 100%; margin-top: 5px;
+            background: var(--blue);
+            color: white;
+            width: 100%;
+            margin-top: 4px;
+            letter-spacing: 0.3px;
         }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 3px 12px rgba(102,126,234,0.4); }
+        .btn-primary:hover {
+            background: #005a8c;
+            box-shadow: 0 3px 12px rgba(0, 119, 190, 0.25);
+        }
         .btn-import {
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            color: white; width: 100%; margin-top: 4px;
+            background: var(--mint);
+            color: #1a3a30;
+            width: 100%;
+            margin-top: 4px;
+            font-weight: 600;
         }
-        .btn-import:hover { transform: translateY(-1px); box-shadow: 0 3px 12px rgba(243,156,18,0.4); }
+        .btn-import:hover {
+            background: var(--mint-dark);
+            color: white;
+        }
         .btn-sm {
-            padding: 3px 7px; font-size: 10px; border-radius: 4px;
-            cursor: pointer; border: none; font-family: inherit; font-weight: 600;
+            padding: 5px 10px;
+            font-size: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            font-weight: 600;
         }
-        .btn-delete { background: #e74c3c; color: white; }
-        .btn-export { background: #27ae60; color: white; }
-        .btn-add { background: #667eea; color: white; }
-        .btn-toggle { background: #95a5a6; color: white; }
-        .btn-import-csv { background: #3498db; color: white; }
-        
-        .table-panel {
-            background: white; padding: 16px; border-radius: 10px;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.04); flex: 1; min-width: 750px;
-            overflow-x: auto;
+        .btn-delete {
+            background: #ffe0e0;
+            color: var(--red);
         }
-        .table-panel h3 { margin-bottom: 10px; font-size: 14px; }
+        .btn-delete:hover {
+            background: var(--red);
+            color: white;
+        }
+        .btn-edit {
+            background: #e0edf5;
+            color: var(--blue);
+        }
+        .btn-edit:hover {
+            background: var(--blue);
+            color: white;
+        }
+        .btn-export {
+            background: #e0f5ec;
+            color: var(--green);
+        }
+        .btn-export:hover {
+            background: var(--green);
+            color: white;
+        }
+        .btn-add {
+            background: #e0edf5;
+            color: var(--blue);
+        }
+        .btn-add:hover {
+            background: var(--blue);
+            color: white;
+        }
+        .btn-toggle {
+            background: #e8ecf1;
+            color: var(--text-light);
+        }
+        .btn-copy {
+            background: var(--mint);
+            color: #1a3a30;
+            font-size: 10px;
+            padding: 4px 10px;
+        }
+        .btn-copy:hover {
+            background: var(--mint-dark);
+            color: white;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            flex: 1;
+            min-width: 700px;
+            border: 1px solid #eef1f5;
+            overflow: hidden;
+        }
+        .right-panel .panel-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid #eef1f5;
+        }
+        .right-panel .panel-header h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
         .filter-bar {
-            display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; align-items: center;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
         }
-        .filter-bar select, .filter-bar input {
-            padding: 5px 7px; border: 2px solid #e0e0e0;
-            border-radius: 5px; font-size: 10px; font-family: inherit;
+        .filter-bar select,
+        .filter-bar input {
+            padding: 6px 10px;
+            border: 2px solid #e8ecf1;
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-family: inherit;
         }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 10px; }
+        .table-container {
+            overflow-x: auto;
+            padding: 0 16px 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
         thead th {
-            background: #f8f9fa; padding: 6px 5px; text-align: center;
-            font-weight: 700; border-bottom: 2px solid #e0e0e0;
-            white-space: nowrap; position: sticky; top: 0;
+            background: #f8fafb;
+            padding: 8px 6px;
+            text-align: center;
+            font-weight: 700;
+            border-bottom: 2px solid #e8ecf1;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            color: var(--text-light);
+            font-size: 9px;
+            letter-spacing: 0.3px;
         }
-        tbody td { padding: 5px; border-bottom: 1px solid #f0f0f0; text-align: center; vertical-align: middle; }
-        tbody tr { transition: background 0.2s; }
-        tbody tr:hover { background: #f8f9ff; }
-        
-        tr.danger-row { background: #ffebee !important; }
-        tr.danger-row:hover { background: #ffcdd2 !important; }
-        tr.warning-row { background: #fffde7 !important; }
-        tr.warning-row:hover { background: #fff9c4 !important; }
-        tr.done-row { background: #f5f5f5 !important; opacity: 0.7; }
-        tr.paused-row { background: #fef9e7 !important; opacity: 0.8; }
-        tr.terminated-row { background: #f5f5f5 !important; opacity: 0.5; text-decoration: line-through; color: #999; }
-        tr.done-collapsed { display: none; }
-        
+        tbody td {
+            padding: 7px 6px;
+            border-bottom: 1px solid #f2f4f6;
+            text-align: center;
+            vertical-align: middle;
+        }
+        tbody tr {
+            transition: background 0.15s;
+            cursor: default;
+        }
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+        tbody tr.selected-row {
+            background: #e8f4f8 !important;
+            outline: 2px solid var(--blue);
+            outline-offset: -2px;
+            border-radius: 4px;
+        }
+        tr.danger-row {
+            background: var(--red-bg) !important;
+        }
+        tr.danger-row:hover {
+            background: #ffe0e0 !important;
+        }
+        tr.warning-row {
+            background: var(--yellow-bg) !important;
+        }
+        tr.warning-row:hover {
+            background: #fff8e0 !important;
+        }
+        tr.done-row {
+            background: #f8f9fa !important;
+            opacity: 0.65;
+        }
+        tr.done-row:hover {
+            opacity: 0.85;
+        }
+        tr.paused-row {
+            background: #fdf8f2 !important;
+            opacity: 0.8;
+        }
+        tr.terminated-row {
+            background: #f5f5f5 !important;
+            opacity: 0.5;
+            text-decoration: line-through;
+            color: #aaa;
+        }
+        tr.done-collapsed {
+            display: none;
+        }
+
+        /* Node cells */
         .node-cell {
-            display: inline-block; padding: 2px 5px; border-radius: 8px;
-            font-size: 9px; font-weight: 700; margin: 1px; white-space: nowrap;
+            display: inline-block;
+            padding: 3px 7px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            margin: 1px;
+            white-space: nowrap;
         }
-        .node-danger { background: #ffebee; color: #c0392b; border: 1px solid #e74c3c; }
-        .node-warning { background: #fffde7; color: #856404; border: 1px solid #f39c12; }
-        .node-done { background: #e8f5e9; color: #155724; border: 1px solid #27ae60; }
-        .node-normal { background: #f5f5f5; color: #636e72; border: 1px solid #ddd; }
-        
+        .node-danger {
+            background: #ffe0e0;
+            color: #c0392b;
+            border: 1px solid #e8a0a0;
+        }
+        .node-warning {
+            background: #fff8e0;
+            color: #856404;
+            border: 1px solid #e8d080;
+        }
+        .node-done {
+            background: #e0f5e8;
+            color: #155724;
+            border: 1px solid #a0d8b0;
+        }
+        .node-normal {
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
         .badge {
-            display: inline-block; padding: 2px 5px; border-radius: 6px;
-            font-size: 9px; font-weight: 600;
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 600;
         }
-        .badge-purple { background:#e8daef; color:#6c3483; }
-        .badge-active { background:#d4edda; color:#155724; }
-        .badge-paused { background:#fff3cd; color:#856404; }
-        .badge-terminated { background:#fce4e4; color:#c0392b; }
-        
-        .material-status { font-weight:600; font-size:10px; }
-        .material-yes { color:#27ae60; }
-        .material-no { color:#e74c3c; }
-        .material-warning { color:#f39c12; }
-        .express-status { font-weight:600; font-size:10px; }
-        .express-yes { color:#27ae60; }
-        .express-no { color:#e74c3c; }
-        .express-warning { color:#f39c12; }
-        
-        .link-icon { text-decoration: none; font-size: 12px; }
-        .link-icon:hover { opacity: 0.7; }
-        
+        .badge-brand {
+            background: #e0edf5;
+            color: #0077BE;
+        }
+        .badge-direct {
+            background: #fff0e0;
+            color: #e67e22;
+            font-size: 9px;
+        }
+        .badge-paused {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-terminated {
+            background: #fce4e4;
+            color: #c0392b;
+        }
+        .material-status {
+            font-weight: 600;
+            font-size: 10px;
+        }
+        .material-yes {
+            color: var(--green);
+        }
+        .material-no {
+            color: var(--red);
+        }
+        .material-warning {
+            color: var(--yellow);
+        }
+        .express-status {
+            font-weight: 600;
+            font-size: 10px;
+        }
+        .express-yes {
+            color: var(--green);
+        }
+        .express-no {
+            color: var(--red);
+        }
+        .express-warning {
+            color: var(--yellow);
+        }
+
+        .link-icon {
+            text-decoration: none;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+        .link-icon:hover {
+            opacity: 1;
+        }
         .group-header td {
-            background:#f0f2ff !important; font-weight:700; font-size:10px;
-            color:#667eea; padding:5px !important; border-bottom:2px solid #667eea !important;
+            background: #f0f4f8 !important;
+            font-weight: 700;
+            font-size: 10px;
+            color: var(--blue);
+            padding: 7px 10px !important;
+            border-bottom: 2px solid #d0dce8 !important;
+            letter-spacing: 0.3px;
         }
-        
-        .empty-state { text-align:center; padding:25px; color:#b2bec3; }
-        
-        .note-cell { max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 9px; color: #636e72; cursor: pointer; }
-        .note-cell:hover { white-space: normal; overflow: visible; background: #fffde7; padding: 2px 3px; border-radius: 3px; position: relative; z-index: 10; }
-        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #c0c8d0;
+        }
+        .note-cell {
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 9px;
+            color: #8c9aa8;
+            cursor: pointer;
+        }
+        .note-cell:hover {
+            white-space: normal;
+            overflow: visible;
+            background: #fffde7;
+            padding: 3px 5px;
+            border-radius: 4px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Modal */
         .modal-overlay {
-            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
-        .modal-overlay.show { display: flex; }
+        .modal-overlay.show {
+            display: flex;
+        }
         .modal {
-            background: white; border-radius: 12px; padding: 20px; width: 90%; max-width: 600px;
-            max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
         }
-        .modal h3 { margin-bottom: 12px; font-size: 15px; }
+        .modal h3 {
+            margin-bottom: 14px;
+            font-size: 16px;
+        }
         .modal textarea {
-            width: 100%; height: 200px; border: 2px solid #e0e0e0;
-            border-radius: 8px; padding: 10px; font-size: 12px; font-family: inherit; resize: vertical;
+            width: 100%;
+            height: 220px;
+            border: 2px solid #e8ecf1;
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            font-size: 12px;
+            font-family: inherit;
+            resize: vertical;
         }
-        .modal textarea:focus { outline: none; border-color: #667eea; }
-        .modal .btn-row { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
-        
+        .modal textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+        .modal .btn-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+            justify-content: flex-end;
+        }
+
+        /* Brand Cards */
+        .brand-card {
+            background: var(--light-bg);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid #dceaf0;
+        }
+        .brand-card h4 {
+            font-size: 13px;
+            color: var(--blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .brand-card .info-row {
+            font-size: 11px;
+            margin-bottom: 5px;
+            color: #3a4a5a;
+            display: flex;
+            align-items: flex-start;
+            gap: 4px;
+        }
+        .brand-card .info-label {
+            font-weight: 600;
+            min-width: 45px;
+            color: var(--text-light);
+            flex-shrink: 0;
+        }
+        .brand-card textarea {
+            width: 100%;
+            font-size: 10px;
+            font-family: inherit;
+            border: 2px solid #e8ecf1;
+            border-radius: 4px;
+            padding: 6px;
+            min-height: 50px;
+            resize: vertical;
+        }
+        .brand-card textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        /* Speech Template */
+        .speech-card {
+            background: #fafcfd;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid #e8ecf1;
+            position: relative;
+        }
+        .speech-card h4 {
+            font-size: 12px;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        .speech-content {
+            background: white;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            white-space: pre-wrap;
+            line-height: 1.7;
+            border: 1px solid #f0f2f5;
+            color: #3a4a5a;
+        }
+        .speech-card .btn-copy {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+        }
+
+        /* Screenshot reminder */
+        .screenshot-reminder {
+            background: #fffdf0;
+            border: 1px solid #f0e080;
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            font-size: 11px;
+            color: #856404;
+            display: none;
+        }
+        .screenshot-reminder.show {
+            display: block;
+        }
+
+        /* Stats panel */
         .stat-panel {
-            background: white; padding: 20px; border-radius: 10px;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #eef1f5;
         }
-        .stat-panel h3 { margin-bottom: 14px; font-size: 15px; }
+        .stat-panel h3 {
+            margin-bottom: 14px;
+            font-size: 15px;
+        }
         .stat-filters {
-            display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
         }
-        .stat-filters select, .stat-filters input {
-            padding: 6px 10px; border: 2px solid #e0e0e0;
-            border-radius: 6px; font-size: 11px; font-family: inherit;
+        .stat-filters select,
+        .stat-filters input {
+            padding: 7px 10px;
+            border: 2px solid #e8ecf1;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-family: inherit;
         }
         .stat-result {
-            display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
         }
         .stat-result-card {
-            background: #f8f9ff; padding: 14px 18px; border-radius: 8px;
-            text-align: center; min-width: 100px;
+            background: var(--light-bg);
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            min-width: 100px;
         }
-        .stat-result-card .big { font-size: 28px; font-weight: bold; color: #667eea; }
-        .stat-result-card .small { font-size: 10px; color: #636e72; }
-        .stat-detail-table { width: 100%; font-size: 10px; }
-        .stat-detail-table th { background: #f8f9fa; padding: 6px; }
-        .stat-detail-table td { padding: 5px; border-bottom: 1px solid #eee; }
-        
-        @media (max-width:900px) {
-            .form-panel { flex:0 0 100%; position:static; }
-            .table-panel { min-width:100%; }
+        .stat-result-card .big {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--blue);
+        }
+        .stat-result-card .small {
+            font-size: 10px;
+            color: var(--text-light);
+        }
+        .stat-detail-table {
+            width: 100%;
+            font-size: 10px;
+        }
+        .stat-detail-table th {
+            background: #f8fafb;
+            padding: 6px;
+        }
+        .stat-detail-table td {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .left-panel {
+                flex: 0 0 100%;
+                position: static;
+            }
+            .right-panel {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <h1>📋 达人执行进度管理</h1>
-            <div class="subtitle">智能导入 · 多节点提醒 · 快递素材追踪 · 数据筛查 · CSV导入导出</div>
+            <div>
+                <h1>达人执行进度管理</h1>
+                <div class="subtitle">智能导入 · 节点提醒 · 快递素材追踪 · 数据筛查</div>
+            </div>
+            <div class="header-right" id="todayDisplay">📅 加载中...</div>
         </div>
-        
+
+        <!-- Stats -->
         <div class="stats-bar">
             <div class="stat-card total"><div class="number" id="statTotal">0</div><div class="label">总任务数</div></div>
             <div class="stat-card danger"><div class="number" id="statDanger">0</div><div class="label">需处理</div></div>
             <div class="stat-card warning"><div class="number" id="statWarning">0</div><div class="label">即将到期</div></div>
             <div class="stat-card done"><div class="number" id="statDone">0</div><div class="label">已完成</div></div>
         </div>
-        
-        <div class="tabs-nav" id="tabsNav">
-            <button class="tab-btn urgent-tab active" data-tab="urgent">🔴 紧急提醒</button>
-            <button class="tab-btn stat-tab" data-tab="stats">📊 数据筛查</button>
-        </div>
-        
+
+        <!-- Screenshot Reminder -->
+        <div class="screenshot-reminder" id="screenshotReminder"></div>
+
+        <!-- Tabs -->
+        <div class="tabs-nav" id="tabsNav"></div>
+
+        <!-- Main -->
         <div class="main-content" id="mainContent">
-            <div class="form-panel" id="formPanel">
-                <h3 id="formTitle">➕ 新增达人任务</h3>
-                <button class="btn btn-import" onclick="showImportModal()">📋 智能导入确认单</button>
-                
-                <div class="form-group" style="margin-top:8px;">
-                    <label>📱 达人昵称 *</label>
-                    <input type="text" id="nickname" placeholder="输入达人昵称" list="nicknameList">
-                    <datalist id="nicknameList"></datalist>
+            <!-- Left Panel -->
+            <div class="left-panel" id="leftPanel">
+                <div class="panel-tabs">
+                    <button class="panel-tab active" data-ptab="form">📝 表单</button>
+                    <button class="panel-tab" data-ptab="speech">💬 话术</button>
+                    <button class="panel-tab" data-ptab="brands">🏷️ 品牌</button>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>🏷️ 平台 *</label>
-                        <select id="platform">
-                            <option value="">请选择</option>
-                            <option value="抖音">抖音</option>
-                            <option value="小红书">小红书</option>
-                        </select>
+                <!-- Form Panel -->
+                <div class="panel-content" id="panelForm">
+                    <button class="btn btn-import" onclick="showImportModal()">📋 智能导入确认单</button>
+                    <div class="form-group" style="margin-top:10px;">
+                        <label>📱 达人昵称 *</label>
+                        <input type="text" id="nickname" placeholder="输入达人昵称" list="nicknameList">
+                        <datalist id="nicknameList"></datalist>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>🏷️ 平台 *</label><select id="platform"><option value="">请选择</option><option value="抖音">抖音</option><option value="小红书">小红书</option></select></div>
+                        <div class="form-group"><label>🎯 类型 *</label><select id="creatorType" onchange="updateTimelineForm()"><option value="">请选择</option><option value="图文达人">图文达人</option><option value="视频达人">视频达人</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>🏢 品牌 *</label><input type="text" id="brand" placeholder="品牌名称" list="brandList"><datalist id="brandList"></datalist></div>
+                        <div class="form-group"><label>👥 粉丝量</label><input type="text" id="followers" placeholder="如：1.2万"></div>
+                    </div>
+                    <div class="form-group"><label>🔗 主页链接</label><input type="text" id="profileUrl" placeholder="达人主页链接"></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>💰 执行价</label><input type="text" id="execPrice" placeholder="执行价格"></div>
+                        <div class="form-group"><label>📅 发布档期</label><input type="date" id="publishDate"></div>
                     </div>
                     <div class="form-group">
-                        <label>🎯 类型 *</label>
-                        <select id="creatorType" onchange="updateTimelineForm()">
-                            <option value="">请选择</option>
-                            <option value="图文达人">图文达人</option>
-                            <option value="视频达人">视频达人</option>
-                        </select>
+                        <label style="display:flex;align-items:center;gap:6px;">
+                            <input type="checkbox" id="isDirect" onchange="onDirectChange()"> ⚡ 直发达人（品牌供稿，无需寄品，不回收素材）
+                        </label>
+                    </div>
+                    <div class="timeline-section" id="timelineSection">
+                        <h4>📅 节点时间线</h4>
+                        <div id="timelineNodes"></div>
+                    </div>
+                    <div class="form-group"><label>📌 合作状态</label><select id="coopStatus" onchange="onCoopStatusChange()"><option value="正常合作">正常合作</option><option value="暂停">暂停</option><option value="已终止">已终止</option></select></div>
+                    <div id="pauseDateSection" style="display:none;">
+                        <div class="form-row">
+                            <div class="form-group"><label>⏸️ 暂停开始</label><input type="date" id="pauseStart"></div>
+                            <div class="form-group"><label>▶️ 暂停结束</label><input type="date" id="pauseEnd"></div>
+                        </div>
+                    </div>
+                    <div id="expressSection">
+                        <div class="form-group"><label>📦 是否已寄出给达人</label><select id="sentOut"><option value="否">否</option><option value="是">是</option></select></div>
+                        <div class="form-group"><label>📬 达人是否寄回</label><select id="sentBack"><option value="否">否</option><option value="是">是</option></select></div>
+                        <div class="form-group"><label>🔢 寄回快递单号 *完成必填</label><input type="text" id="trackingNumber" placeholder="寄回单号（完成合作必填）"></div>
+                    </div>
+                    <div class="form-group" id="materialSection"><label>📁 素材是否已给到</label><select id="materialReceived"><option value="否">否</option><option value="是">是</option></select></div>
+                    <div class="form-group"><label>📝 备注</label><textarea id="notes" placeholder="收件地址、达人特殊需求等"></textarea></div>
+                    <input type="hidden" id="editId" value="">
+                    <button class="btn btn-primary" onclick="saveRecord()">✅ 保存记录</button>
+                    <button class="btn" style="background:#8c9aa8;color:white;width:100%;margin-top:4px;" onclick="cancelEdit()" id="btnCancel" hidden>取消编辑</button>
+                </div>
+                <!-- Speech Panel -->
+                <div class="panel-content hidden" id="panelSpeech">
+                    <p style="font-size:10px;color:var(--text-light);margin-bottom:10px;">点击表格中达人名字选中，话术自动填入日期</p>
+                    <div class="speech-card" id="speechScheduleText">
+                        <h4>📅 拉档期话术（<span id="speechTypeLabel">图文达人</span>）</h4>
+                        <button class="btn btn-sm btn-copy" style="position:absolute;top:12px;right:12px;" onclick="copySpeech('schedule')">📋 复制</button>
+                        <div class="speech-content" id="speechSchedule"></div>
+                    </div>
+                    <div class="speech-card" id="speechScheduleVideo" style="display:none;">
+                        <h4>📅 拉档期话术（视频达人）</h4>
+                        <button class="btn btn-sm btn-copy" style="position:absolute;top:12px;right:12px;" onclick="copySpeech('scheduleVideo')">📋 复制</button>
+                        <div class="speech-content" id="speechScheduleVideoContent"></div>
+                    </div>
+                    <div class="speech-card" id="speechReturn">
+                        <h4>📦 寄回话术</h4>
+                        <button class="btn btn-sm btn-copy" style="position:absolute;top:12px;right:12px;" onclick="copySpeech('return')">📋 复制</button>
+                        <div class="speech-content" id="speechReturnContent"></div>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>🏢 品牌 *</label>
-                        <input type="text" id="brand" placeholder="品牌名称" list="brandList">
-                        <datalist id="brandList"></datalist>
-                    </div>
-                    <div class="form-group">
-                        <label>👥 粉丝量</label>
-                        <input type="text" id="followers" placeholder="如：1.2万">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>🔗 主页链接</label>
-                    <input type="text" id="profileUrl" placeholder="达人主页链接">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>💰 执行价</label>
-                        <input type="text" id="execPrice" placeholder="执行价格">
-                    </div>
-                    <div class="form-group">
-                        <label>📅 发布档期</label>
-                        <input type="date" id="publishDate">
-                    </div>
-                </div>
-                
-                <div class="timeline-section" id="timelineSection">
-                    <h4>📅 节点时间线（每个节点独立提醒）</h4>
-                    <div id="timelineNodes"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>📌 合作状态</label>
-                    <select id="coopStatus">
-                        <option value="正常合作">正常合作</option>
-                        <option value="暂停">暂停</option>
-                        <option value="已终止">已终止</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>📦 是否已寄出给达人</label>
-                    <select id="sentOut"><option value="否">否</option><option value="是">是</option></select>
-                </div>
-                <div class="form-group">
-                    <label>📬 达人是否寄回</label>
-                    <select id="sentBack"><option value="否">否</option><option value="是">是</option></select>
-                </div>
-                <div class="form-group">
-                    <label>🔢 寄回快递单号</label>
-                    <input type="text" id="trackingNumber" placeholder="寄回单号（选填）">
-                </div>
-                <div class="form-group">
-                    <label>📁 素材是否已给到</label>
-                    <select id="materialReceived"><option value="否">否</option><option value="是">是</option></select>
-                </div>
-                <div class="form-group">
-                    <label>📝 备注</label>
-                    <textarea id="notes" placeholder="沟通要点、合作须知等"></textarea>
-                </div>
-                
-                <input type="hidden" id="editId" value="">
-                <button class="btn btn-primary" onclick="saveRecord()">✅ 保存记录</button>
-                <button class="btn" style="background:#95a5a6;color:white;width:100%;margin-top:4px;" onclick="cancelEdit()" id="btnCancel" hidden>取消编辑</button>
-            </div>
-            
-            <div class="table-panel" id="tablePanel">
-                <h3 id="tableTitle">📊 紧急提醒 - 全部达人</h3>
-                <div class="filter-bar">
-                    <select id="filterPlatform" onchange="renderTable()">
-                        <option value="">全部平台</option>
-                        <option value="抖音">抖音</option>
-                        <option value="小红书">小红书</option>
-                    </select>
-                    <input type="text" id="filterSearch" placeholder="🔍 搜索昵称..." oninput="renderTable()">
-                    <button class="btn btn-sm btn-toggle" onclick="toggleDoneRows()" id="btnToggleDone">📂 折叠已完成</button>
-                    <button class="btn btn-sm btn-export" onclick="exportCSV()">📥 导出CSV</button>
-                    <button class="btn btn-sm btn-import-csv" onclick="importCSV()">📥 导入CSV</button>
-                    <button class="btn btn-sm btn-add" onclick="scrollToForm()">➕ 新增</button>
-                </div>
-                <div id="tableContainer" style="overflow-x:auto;">
-                    <table>
-                        <thead id="tableHead"></thead>
-                        <tbody id="tableBody">
-                            <tr><td colspan="12" class="empty-state">暂无记录，请添加达人任务 📝</td></tr>
-                        </tbody>
-                    </table>
+                <!-- Brands Panel -->
+                <div class="panel-content hidden" id="panelBrands">
+                    <p style="font-size:10px;color:var(--text-light);margin-bottom:10px;">管理各品牌寄回地址与审核要点</p>
+                    <div id="brandCardsContainer"></div>
                 </div>
             </div>
-            
+
+            <!-- Right Panel -->
+            <div class="right-panel" id="rightPanel">
+                <div class="panel-header">
+                    <h3 id="tableTitle">📊 紧急提醒 - 全部达人</h3>
+                    <div class="filter-bar">
+                        <select id="filterPlatform" onchange="renderTable()"><option value="">全部平台</option><option value="抖音">抖音</option><option value="小红书">小红书</option></select>
+                        <input type="text" id="filterSearch" placeholder="🔍 搜索昵称/备注..." oninput="renderTable()">
+                        <button class="btn btn-sm btn-toggle" onclick="toggleDoneRows()" id="btnToggleDone">📂 折叠已完成</button>
+                        <button class="btn btn-sm btn-export" onclick="exportCSV()">📥 CSV导出</button>
+                        <button class="btn btn-sm" style="background:#e0edf5;color:var(--blue);" onclick="backupData()">💾 备份</button>
+                        <button class="btn btn-sm" style="background:#e0edf5;color:var(--blue);" onclick="restoreData()">📥 恢复</button>
+                        <button class="btn btn-sm btn-add" onclick="scrollToForm()">➕ 新增</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table><thead id="tableHead"></thead><tbody id="tableBody"><tr><td colspan="15" class="empty-state">暂无记录，请添加达人任务 📝</td></tr></tbody></table>
+                </div>
+            </div>
+
+            <!-- Stats Panel -->
             <div class="stat-panel" id="statPanel" style="display:none;flex:1;min-width:700px;">
                 <h3>📊 数据筛查</h3>
                 <div class="stat-filters">
-                    <select id="statMonth" onchange="runStats()">
-                        <option value="">全部月份</option>
-                    </select>
-                    <select id="statBrand" onchange="runStats()">
-                        <option value="">全部品牌</option>
-                    </select>
-                    <select id="statType" onchange="runStats()">
-                        <option value="">全部类型</option>
-                        <option value="图文达人">图文达人</option>
-                        <option value="视频达人">视频达人</option>
-                    </select>
-                    <select id="statPlatform" onchange="runStats()">
-                        <option value="">全部平台</option>
-                        <option value="抖音">抖音</option>
-                        <option value="小红书">小红书</option>
-                    </select>
+                    <select id="statMonth" onchange="runStats()"><option value="">全部月份</option></select>
+                    <select id="statBrand" onchange="runStats()"><option value="">全部品牌</option></select>
+                    <select id="statType" onchange="runStats()"><option value="">全部类型</option><option value="图文达人">图文达人</option><option value="视频达人">视频达人</option></select>
+                    <select id="statPlatform" onchange="runStats()"><option value="">全部平台</option><option value="抖音">抖音</option><option value="小红书">小红书</option></select>
                     <button class="btn btn-sm btn-export" onclick="exportStatCSV()">📥 导出结果</button>
                 </div>
                 <div class="stat-result" id="statResult"></div>
@@ -429,118 +1006,151 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- Import Modal -->
     <div class="modal-overlay" id="importModal">
         <div class="modal">
             <h3>📋 智能导入确认单</h3>
-            <p style="font-size:11px;color:#636e72;margin-bottom:8px;">粘贴达人确认单信息，系统自动解析并填入表单</p>
+            <p style="font-size:11px;color:var(--text-light);margin-bottom:8px;">粘贴达人确认单信息，系统自动解析并填入表单</p>
             <textarea id="importText" placeholder="粘贴确认单内容..."></textarea>
             <div class="btn-row">
-                <button class="btn btn-sm" style="background:#95a5a6;color:white;" onclick="closeImportModal()">取消</button>
+                <button class="btn btn-sm" style="background:#8c9aa8;color:white;" onclick="closeImportModal()">取消</button>
                 <button class="btn btn-sm btn-import" onclick="parseImport()">🔍 解析并填入</button>
             </div>
         </div>
     </div>
 
+    <!-- Hidden file input for restore -->
+    <input type="file" id="restoreFileInput" accept=".json" style="display:none;" onchange="handleRestore(event)">
+
     <script>
-        const STORAGE_KEY = 'creator_records_v7';
+        const STORAGE_KEY = 'creator_records_v10';
+        const BRAND_INFO_KEY = 'brand_info_v1';
         let currentTab = 'urgent';
-        let doneCollapsed = false;
-        
+        let doneCollapsed = true;
+        let selectedRecordIndex = -1;
+
+        // ============ UTILS ============
         function getTimelineNodes(creatorType) {
-            if (creatorType === '图文达人') {
-                return [
-                    { key: 'outline', label: '大纲' },
-                    { key: 'draft', label: '图文初稿' },
-                    { key: 'publish', label: '发布时间' }
-                ];
-            } else if (creatorType === '视频达人') {
-                return [
-                    { key: 'outline', label: '大纲' },
-                    { key: 'script', label: '脚本' },
-                    { key: 'videoDraft', label: '视频初稿' },
-                    { key: 'publish', label: '发布时间' }
-                ];
-            }
+            if (creatorType === '图文达人')
+                return [{ key: 'outline', label: '大纲' }, { key: 'draft', label: '图文初稿' },
+                { key: 'publish', label: '发布时间' }];
+            if (creatorType === '视频达人')
+                return [{ key: 'outline', label: '大纲' }, { key: 'script', label: '脚本' }, { key: 'videoDraft',
+                    label: '视频初稿' }, { key: 'publish', label: '发布时间' }];
             return [];
         }
-        
-        function getRecords() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : [];
-        }
-        function saveRecords(records) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-        }
-        
+
+        function getRecords() { const d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : []; }
+
+        function saveRecords(r) { localStorage.setItem(STORAGE_KEY, JSON.stringify(r)); }
+
+        function getBrandInfo() { const d = localStorage.getItem(BRAND_INFO_KEY); return d ? JSON.parse(d) : {}; }
+
+        function saveBrandInfo(b) { localStorage.setItem(BRAND_INFO_KEY, JSON.stringify(b)); }
+
+        function getToday() { const t = new Date();
+            t.setHours(0, 0, 0, 0); return t; }
+
+        function formatDate(d) { if (!d) return '';
+            const p = new Date(d); return `${p.getFullYear()}-${String(p.getMonth()+1).padStart(2,'0')}-${String(p.getDate()).padStart(2,'0')}`; }
+
         function getNodeStatus(dateStr) {
             if (!dateStr) return 'empty';
-            const today = new Date(); today.setHours(0,0,0,0);
-            const deadline = new Date(dateStr); deadline.setHours(0,0,0,0);
-            const diffDays = Math.floor((deadline - today) / (1000*60*60*24));
-            if (diffDays < 0) return 'danger';
-            if (diffDays === 0 || diffDays === 1) return 'warning';
+            const t = getToday();
+            const d = new Date(dateStr);
+            d.setHours(0, 0, 0, 0);
+            const diff = Math.floor((d - t) / (1000 * 60 * 60 * 24));
+            if (diff < 0) return 'danger';
+            if (diff <= 1) return 'warning';
             return 'normal';
         }
-        
-        function areAllNodesDone(record) {
-            const nodes = getTimelineNodes(record.creatorType);
-            if (!record.timeline) return false;
-            return nodes.every(n => record.timeline[n.key] && record.timeline[n.key].done);
-        }
-        
+
         function getPublishDate(record) {
             if (record.publishDate) return record.publishDate;
-            if (record.timeline && record.timeline['publish'] && record.timeline['publish'].date) {
-                return record.timeline['publish'].date;
-            }
+            if (record.timeline && record.timeline['publish'] && record.timeline['publish'].date) return record.timeline[
+                'publish'].date;
             return null;
         }
-        
-        // 快递状态：已寄出但未寄回，基于发布时间判断
+
+        function isFullyCompleted(record) {
+            if (record.coopStatus === '已终止') return false;
+            if (record.isDirect) {
+                const pubDate = getPublishDate(record);
+                if (!pubDate) return false;
+                const t = getToday();
+                const p = new Date(pubDate);
+                p.setHours(0, 0, 0, 0);
+                return p <= t;
+            }
+            const pubDate = getPublishDate(record);
+            if (!pubDate) return false;
+            const t = getToday();
+            const p = new Date(pubDate);
+            p.setHours(0, 0, 0, 0);
+            if (p > t) return false;
+            if (record.sentBack !== '是') return false;
+            if (!record.trackingNumber || record.trackingNumber.trim() === '') return false;
+            if (record.materialReceived !== '是') return false;
+            return true;
+        }
+
         function getExpressStatus(record) {
-            if (record.sentBack === '是') return 'done';
+            if (record.isDirect) return 'normal';
+            if (record.sentBack === '是' && record.trackingNumber && record.trackingNumber.trim() !== '') return 'done';
             if (record.sentOut !== '是') return 'normal';
             const pubDate = getPublishDate(record);
             if (!pubDate) return 'normal';
-            const today = new Date(); today.setHours(0,0,0,0);
-            const pDate = new Date(pubDate); pDate.setHours(0,0,0,0);
-            const diffDays = Math.floor((today - pDate) / (1000*60*60*24));
-            if (diffDays > 3) return 'danger';
-            if (diffDays >= 0) return 'warning';
+            const t = getToday();
+            const p = new Date(pubDate);
+            p.setHours(0, 0, 0, 0);
+            const diff = Math.floor((t - p) / (1000 * 60 * 60 * 24));
+            if (diff > 3) return 'danger';
+            if (diff >= 0) return 'warning';
             return 'normal';
         }
-        
-        // 素材状态：基于发布时间判断
+
         function getMaterialStatus(record) {
+            if (record.isDirect) return 'normal';
             if (record.materialReceived === '是') return 'done';
             const pubDate = getPublishDate(record);
             if (!pubDate) return 'normal';
-            const today = new Date(); today.setHours(0,0,0,0);
-            const pDate = new Date(pubDate); pDate.setHours(0,0,0,0);
-            const diffDays = Math.floor((today - pDate) / (1000*60*60*24));
-            if (diffDays > 3) return 'danger';
-            if (diffDays >= 0) return 'warning';
+            const t = getToday();
+            const p = new Date(pubDate);
+            p.setHours(0, 0, 0, 0);
+            const diff = Math.floor((t - p) / (1000 * 60 * 60 * 24));
+            if (diff > 3) return 'danger';
+            if (diff >= 0) return 'warning';
             return 'normal';
         }
-        
+
         function getRecordOverallStatus(record) {
             if (record.coopStatus === '已终止') return 'terminated';
-            if (record.coopStatus === '暂停') return 'paused';
-            
-            const nodes = getTimelineNodes(record.creatorType);
-            const allDone = areAllNodesDone(record);
-            
-            // 优先检查快递和素材（基于发布时间，不要求所有节点完成）
-            const es = getExpressStatus(record);
-            const ms = getMaterialStatus(record);
+            if (record.coopStatus === '暂停') {
+                const today = getToday();
+                if (record.pauseEnd) {
+                    const pe = new Date(record.pauseEnd);
+                    pe.setHours(0, 0, 0, 0);
+                    if (today > pe) return 'pause_ending';
+                }
+                if (record.pauseStart) {
+                    const ps = new Date(record.pauseStart);
+                    ps.setHours(0, 0, 0, 0);
+                    if (today >= ps) {
+                        if (!record.pauseEnd) return 'paused';
+                        const pe = new Date(record.pauseEnd);
+                        pe.setHours(0, 0, 0, 0);
+                        if (today <= pe) return 'paused';
+                    }
+                }
+                return 'paused';
+            }
+            if (isFullyCompleted(record)) return 'done';
+            const es = getExpressStatus(record),
+                ms = getMaterialStatus(record);
             if (es === 'danger' || ms === 'danger') return 'danger';
             if (es === 'warning' || ms === 'warning') return 'warning';
-            
-            // 全部节点完成且快递素材都OK
-            if (allDone && es === 'done' && ms === 'done') return 'done';
-            
-            // 检查节点超期
+            const nodes = getTimelineNodes(record.creatorType);
             if (record.timeline) {
                 for (const n of nodes) {
                     const nd = record.timeline[n.key];
@@ -553,97 +1163,73 @@
             }
             return 'normal';
         }
-        
+
         function getSortPriority(record) {
             const status = getRecordOverallStatus(record);
-            const nodes = getTimelineNodes(record.creatorType);
-            let earliest = Infinity;
-            
-            if (status === 'danger') {
-                if (record.timeline && !areAllNodesDone(record)) {
-                    for (const n of nodes) {
-                        const nd = record.timeline[n.key];
-                        if (nd && nd.date && !nd.done && getNodeStatus(nd.date) === 'danger') {
-                            const d = new Date(nd.date); if (d < earliest) earliest = d;
-                        }
-                    }
-                }
-                if (earliest === Infinity && getPublishDate(record)) earliest = new Date(getPublishDate(record));
-                return { g: 0, k: earliest === Infinity ? 0 : earliest.getTime() };
-            }
-            if (status === 'warning') {
-                if (record.timeline && !areAllNodesDone(record)) {
-                    for (const n of nodes) {
-                        const nd = record.timeline[n.key];
-                        if (nd && nd.date && !nd.done) {
-                            const d = new Date(nd.date); if (d < earliest) earliest = d;
-                        }
-                    }
-                }
-                if (earliest === Infinity && getPublishDate(record)) earliest = new Date(getPublishDate(record));
-                return { g: 1, k: earliest === Infinity ? 0 : earliest.getTime() };
-            }
+            if (status === 'done') return { g: 4, k: 0 };
             if (status === 'terminated') return { g: 5, k: 0 };
-            if (status === 'paused') return { g: 4, k: 0 };
-            if (status === 'done') return { g: 3, k: 0 };
-            
-            if (record.timeline) {
-                for (const n of nodes) {
-                    const nd = record.timeline[n.key];
-                    if (nd && nd.date && !nd.done) {
-                        const d = new Date(nd.date); if (d < earliest) earliest = d;
-                    }
-                }
-            }
-            return { g: 2, k: earliest === Infinity ? 0 : earliest.getTime() };
+            if (status === 'paused') return { g: 3, k: 0 };
+            if (status === 'pause_ending') return { g: 1, k: 0 };
+            if (status === 'danger') return { g: 0, k: 0 };
+            if (status === 'warning') return { g: 1, k: 1 };
+            return { g: 2, k: 2 };
         }
-        
+
+        // ============ FORM ============
         function updateTimelineForm() {
             const type = document.getElementById('creatorType').value;
             const container = document.getElementById('timelineNodes');
-            if (!type) { container.innerHTML = '<p style="color:#999;font-size:11px;">请先选择达人类型</p>'; return; }
+            const isDirect = document.getElementById('isDirect').checked;
+            if (!type) { container.innerHTML =
+                '<p style="color:#8c9aa8;font-size:11px;">请先选择达人类型</p>'; return; }
+            if (isDirect) {
+                container.innerHTML =
+                    '<div class="node-row"><span class="node-label">📌 发布时间</span><input type="date" class="node-date" id="node_publish" placeholder="日期"><label style="font-size:10px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="done_publish" onchange="toggleNodeDone(\'publish\')"> 完成</label></div>';
+                return;
+            }
             const nodes = getTimelineNodes(type);
-            container.innerHTML = nodes.map(n => `
-                <div class="node-row">
-                    <span class="node-label">📌 ${n.label}</span>
-                    <input type="date" class="node-date" id="node_${n.key}" placeholder="日期">
-                    <label style="font-size:10px;display:flex;align-items:center;gap:2px;white-space:nowrap;">
-                        <input type="checkbox" id="done_${n.key}" onchange="toggleNodeDone('${n.key}')"> 完成
-                    </label>
-                </div>
-            `).join('');
+            container.innerHTML = nodes.map(n =>
+                `<div class="node-row"><span class="node-label">📌 ${n.label}</span><input type="date" class="node-date" id="node_${n.key}" placeholder="日期"><label style="font-size:10px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="done_${n.key}" onchange="toggleNodeDone('${n.key}')"> 完成</label></div>`
+                ).join('');
         }
-        
-        function toggleNodeDone(key) {
-            const cb = document.getElementById('done_'+key);
-            const dateInput = document.getElementById('node_'+key);
-            dateInput.style.opacity = cb.checked ? '0.5' : '1';
+
+        function toggleNodeDone(key) { const cb = document.getElementById('done_' + key),
+                di = document.getElementById('node_' + key); if (di) di.style.opacity = cb.checked ? '0.5' : '1'; }
+
+        function onDirectChange() {
+            const isDirect = document.getElementById('isDirect').checked;
+            document.getElementById('expressSection').style.display = isDirect ? 'none' : '';
+            document.getElementById('materialSection').style.display = isDirect ? 'none' : '';
+            updateTimelineForm();
+            if (isDirect) {
+                document.getElementById('sentOut').value = '否';
+                document.getElementById('sentBack').value = '否';
+                document.getElementById('trackingNumber').value = '';
+                document.getElementById('materialReceived').value = '否';
+            }
         }
-        
-        document.getElementById('nickname').addEventListener('change', function() {
-            const name = this.value.trim();
-            if (!name || document.getElementById('editId').value) return;
-            const records = getRecords();
-            const found = records.find(r => r.nickname === name);
-            if (found) fillFormFromRecord(found);
-        });
-        
+
+        function onCoopStatusChange() {
+            const status = document.getElementById('coopStatus').value;
+            document.getElementById('pauseDateSection').style.display = status === '暂停' ? '' : 'none';
+        }
+
         function fillFormFromRecord(r) {
+            document.getElementById('nickname').value = r.nickname || '';
             document.getElementById('platform').value = r.platform || '';
             document.getElementById('creatorType').value = r.creatorType || '';
+            document.getElementById('isDirect').checked = r.isDirect || false;
+            onDirectChange();
             updateTimelineForm();
             setTimeout(() => {
-                if (r.timeline) {
+                if (r.timeline)
                     for (const key in r.timeline) {
-                        const dateEl = document.getElementById('node_'+key);
-                        const doneEl = document.getElementById('done_'+key);
-                        if (dateEl) dateEl.value = r.timeline[key].date || '';
-                        if (doneEl) {
-                            doneEl.checked = r.timeline[key].done || false;
-                            if (doneEl.checked && dateEl) dateEl.style.opacity = '0.5';
-                        }
+                        const de = document.getElementById('node_' + key),
+                            ce = document.getElementById('done_' + key);
+                        if (de) de.value = r.timeline[key].date || '';
+                        if (ce) { ce.checked = r.timeline[key].done || false; if (ce.checked && de) de.style
+                                .opacity = '0.5'; }
                     }
-                }
             }, 100);
             document.getElementById('brand').value = r.brand || '';
             document.getElementById('followers').value = r.followers || '';
@@ -651,554 +1237,516 @@
             document.getElementById('execPrice').value = r.execPrice || '';
             document.getElementById('publishDate').value = r.publishDate || '';
             document.getElementById('coopStatus').value = r.coopStatus || '正常合作';
+            document.getElementById('pauseStart').value = r.pauseStart || '';
+            document.getElementById('pauseEnd').value = r.pauseEnd || '';
+            onCoopStatusChange();
             document.getElementById('sentOut').value = r.sentOut || '否';
             document.getElementById('sentBack').value = r.sentBack || '否';
             document.getElementById('trackingNumber').value = r.trackingNumber || '';
             document.getElementById('materialReceived').value = r.materialReceived || '否';
             document.getElementById('notes').value = r.notes || '';
         }
-        
+
         function getTimelineData() {
             const type = document.getElementById('creatorType').value;
             if (!type) return {};
-            const nodes = getTimelineNodes(type);
-            const timeline = {};
-            nodes.forEach(n => {
-                timeline[n.key] = {
-                    date: document.getElementById('node_'+n.key)?.value || '',
-                    done: document.getElementById('done_'+n.key)?.checked || false
+            const isDirect = document.getElementById('isDirect').checked;
+            if (isDirect) {
+                return {
+                    publish: {
+                        date: document.getElementById('node_publish')?.value || '',
+                        done: document.getElementById('done_publish')?.checked || false
+                    }
                 };
-            });
+            }
+            const nodes = getTimelineNodes(type),
+                timeline = {};
+            nodes.forEach(n => { timeline[n.key] = { date: document.getElementById('node_' + n.key)?.value || '',
+                    done: document.getElementById('done_' + n.key)?.checked || false }; });
             return timeline;
         }
-        
-        function showImportModal() {
-            document.getElementById('importModal').classList.add('show');
-            document.getElementById('importText').focus();
-        }
-        function closeImportModal() {
-            document.getElementById('importModal').classList.remove('show');
-            document.getElementById('importText').value = '';
-        }
-        
+
+        // ============ IMPORT ============
+        function showImportModal() { document.getElementById('importModal').classList.add('show');
+            document.getElementById('importText').focus(); }
+
+        function closeImportModal() { document.getElementById('importModal').classList.remove('show');
+            document.getElementById('importText').value = ''; }
+
         function parseImport() {
             const text = document.getElementById('importText').value.trim();
             if (!text) { alert('请粘贴确认单内容'); return; }
-            
-            const extract = (pattern) => {
-                const match = text.match(pattern);
-                return match ? match[1].trim() : '';
-            };
-            
-            const nickname = extract(/账号[：:]\s*(.+)/) || extract(/昵称[：:]\s*(.+)/);
+            const extract = p => { const m = text.match(p); return m ? m[1].trim() : ''; };
+            const nickname = extract(/合作达人[：:]\s*(.+)/) || extract(/账号[：:]\s*(.+)/) || extract(/达人昵称[：:]\s*(.+)/) ||
+                extract(/昵称[：:]\s*(.+)/);
             const platformStr = extract(/需求平台[：:]\s*(.+)/) || extract(/平台[：:]\s*(.+)/);
-            const brand = extract(/品牌名称[：:]\s*(.+)/) || extract(/品牌[：:]\s*(.+)/);
-            const profileUrl = extract(/主页链接[：:]\s*(.+)/) || extract(/链接[：:]\s*(.+)/);
+            const brand = extract(/品牌名称[：:]\s*(.+)/) || extract(/合作产品[：:]\s*(.+)/) || extract(/合作内容[：:]\s*(.+)/) ||
+                extract(/品牌[：:]\s*(.+)/);
+            const profileUrl = extract(/主页链接[：:]\s*(.+)/) || extract(/抖音链接[：:]\s*(.+)/) || extract(/链接[：:]\s*(.+)/);
             const followers = extract(/粉丝量[：:]\s*(.+)/);
-            const execPrice = extract(/执行价[：:]\s*(.+)/);
-            
-            const publishDateMatch = text.match(/发布档期[：:].*?(\d+\.\d+)/) || text.match(/最快发布档期[：:].*?(\d+\.\d+)/);
+            const execPrice = extract(/执行价[：:]\s*([\d.]+)/) || extract(/执行价[：:]\s*(.+)/);
+            const pdMatch = text.match(/发布档期[：:].*?(\d+\.\d+)/) || text.match(/最快发布档期[：:].*?(\d+\.\d+)/) || text
+                .match(/合作档期[：:]\s*(\d+\.\d+)/);
             let publishDate = '';
-            if (publishDateMatch) {
-                const [month, day] = publishDateMatch[1].split('.');
-                const year = new Date().getFullYear();
-                publishDate = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
-            }
-            
-            const typeMatch = text.match(/报备[：:]?\s*(图文|视频)/);
+            if (pdMatch) { const [m, d] = pdMatch[1].split('.'); const y = new Date().getFullYear();
+                publishDate = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`; }
+            const typeMatch = text.match(/视频裸价|报备视频/);
             let creatorType = '';
-            if (typeMatch) creatorType = typeMatch[1] === '视频' ? '视频达人' : '图文达人';
-            
-            const addressMatch = text.match(/收件地址[：:]\s*([\s\S]+?)(?:\n\n|\n[^\s]|$)/);
-            let addressInfo = addressMatch ? addressMatch[1].replace(/\n/g, ' ').trim() : '';
-            
+            if (typeMatch) creatorType = '视频达人';
+            else if (text.match(/图文裸价|报备图文/)) creatorType = '图文达人';
+            let platform = '';
+            if (platformStr.includes('小红书')) platform = '小红书';
+            else if (platformStr.includes('抖音')) platform = '抖音';
+            else if (profileUrl.includes('xiaohongshu') || profileUrl.includes('xhslink')) platform = '小红书';
+            else if (profileUrl.includes('douyin')) platform = '抖音';
+            const addrMatch = text.match(/收件地址[：:]\s*([\s\S]+?)(?:\n\n|\n[^\s]|$)/) || text.match(/收件地址[：:]?\s*([\s\S]+?)
+                $/);
+            let addrInfo = addrMatch ? addrMatch[1].replace(/\n/g, ' ').trim() : '';
+            if (addrInfo && addrInfo.length > 200) addrInfo = addrInfo.substring(0, 200);
             const notesMatch = text.match(/【合作须知】([\s\S]+?)$/);
-            let notes = notesMatch ? notesMatch[1].trim() : '';
-            
+            let notesFromText = notesMatch ? notesMatch[1].trim() : '';
+            if (notesFromText && notesFromText.length > 300) notesFromText = notesFromText.substring(0, 300);
             document.getElementById('nickname').value = nickname;
-            if (platformStr.includes('小红书')) document.getElementById('platform').value = '小红书';
-            else if (platformStr.includes('抖音')) document.getElementById('platform').value = '抖音';
-            else document.getElementById('platform').value = platformStr;
-            
+            document.getElementById('platform').value = platform;
             document.getElementById('brand').value = brand;
-            document.getElementById('followers').value = followers;
-            document.getElementById('profileUrl').value = profileUrl;
-            document.getElementById('execPrice').value = execPrice;
+            document.getElementById('followers').value = followers || '';
+            document.getElementById('profileUrl').value = profileUrl || '';
+            document.getElementById('execPrice').value = execPrice || '';
             document.getElementById('publishDate').value = publishDate;
-            
             if (creatorType) {
                 document.getElementById('creatorType').value = creatorType;
                 updateTimelineForm();
-                if (publishDate) {
-                    setTimeout(() => {
-                        const pubEl = document.getElementById('node_publish');
-                        if (pubEl) pubEl.value = publishDate;
-                    }, 100);
-                }
+                if (publishDate) setTimeout(() => { const pe = document.getElementById('node_publish'); if (pe) pe.value =
+                        publishDate; }, 100);
             }
-            
             let fullNotes = '';
-            if (addressInfo) fullNotes += '📮收件信息：' + addressInfo + '\n';
-            if (notes) fullNotes += '📋合作须知：\n' + notes;
+            if (addrInfo) fullNotes += '📮收件信息：' + addrInfo + '\n';
+            if (notesFromText) fullNotes += '📋合作须知：\n' + notesFromText;
             document.getElementById('notes').value = fullNotes.trim();
-            
             closeImportModal();
-            document.getElementById('formPanel').scrollIntoView({behavior:'smooth'});
+            document.getElementById('leftPanel').scrollIntoView({ behavior: 'smooth' });
         }
-        
+
+        // ============ TABS ============
         function switchTab(tab) {
             currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            const activeBtn = document.querySelector(`[data-tab="${tab}"]`);
-            if (activeBtn) activeBtn.classList.add('active');
-            
+            document.querySelectorAll('.tabs-nav .tab-btn').forEach(b => b.classList.remove('active'));
+            const ab = document.querySelector(`.tabs-nav [data-tab="${CSS.escape(tab)}"]`);
+            if (ab) ab.classList.add('active');
             if (tab === 'stats') {
-                document.getElementById('tablePanel').style.display = 'none';
+                document.getElementById('rightPanel').style.display = 'none';
                 document.getElementById('statPanel').style.display = 'block';
-                document.getElementById('formPanel').style.display = 'none';
+                document.getElementById('leftPanel').style.display = 'none';
                 buildStatFilters();
                 runStats();
             } else {
-                document.getElementById('tablePanel').style.display = '';
+                document.getElementById('rightPanel').style.display = '';
                 document.getElementById('statPanel').style.display = 'none';
-                document.getElementById('formPanel').style.display = '';
+                document.getElementById('leftPanel').style.display = '';
                 renderTable();
             }
+            updateScreenshotReminder();
         }
-        
+
         function renderTabs() {
-            const records = getRecords();
-            const brands = [...new Set(records.map(r => r.brand))].sort();
-            const tabsNav = document.getElementById('tabsNav');
-            
-            let html = `
-                <button class="tab-btn urgent-tab${currentTab==='urgent'?' active':''}" data-tab="urgent">🔴 紧急提醒</button>
-                <button class="tab-btn stat-tab${currentTab==='stats'?' active':''}" data-tab="stats">📊 数据筛查</button>
-            `;
-            brands.forEach(brand => {
-                const count = records.filter(r => r.brand === brand).length;
-                html += `<button class="tab-btn${currentTab===brand?' active':''}" data-tab="${brand}">${brand}<span class="brand-count">${count}</span></button>`;
-            });
+            const records = getRecords(),
+                brands = [...new Set(records.map(r => r.brand))].sort(),
+                tabsNav = document.getElementById('tabsNav');
+            let html = `<button class="tab-btn urgent-tab${currentTab==='urgent'?' active':''}" data-tab="urgent">🔴 紧急提醒</button>`;
+            html +=
+                `<button class="tab-btn recycle-tab${currentTab==='recycle'?' active':''}" data-tab="recycle">📦 待回收</button>`;
+            html +=
+                `<button class="tab-btn stat-tab${currentTab==='stats'?' active':''}" data-tab="stats">📊 数据筛查</button>`;
+            brands.forEach(b => { const c = records.filter(r => r.brand === b).length;
+                html +=
+                    `<button class="tab-btn${currentTab===b?' active':''}" data-tab="${b}">${b}<span class="brand-count">${c}</span></button>`; });
             tabsNav.innerHTML = html;
-            
-            tabsNav.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    switchTab(this.dataset.tab);
-                });
-            });
+            tabsNav.querySelectorAll('.tab-btn').forEach(btn => { btn.addEventListener('click', function() { switchTab(this
+                        .dataset.tab); }); });
         }
-        
-        function toggleDoneRows() {
-            doneCollapsed = !doneCollapsed;
-            document.getElementById('btnToggleDone').textContent = doneCollapsed ? '📂 展开已完成' : '📂 折叠已完成';
-            renderTable();
-        }
-        
+
+        function toggleDoneRows() { doneCollapsed = !doneCollapsed;
+            document.getElementById('btnToggleDone').textContent = doneCollapsed ? '📂 展开已完成/暂停/终止' :
+                '📂 折叠已完成/暂停/终止';
+            renderTable(); }
+
+        // ============ TABLE ============
         function renderTable() {
-            const records = getRecords();
-            const tableTitle = document.getElementById('tableTitle');
-            const filterPlatform = document.getElementById('filterPlatform').value;
-            const filterSearch = document.getElementById('filterSearch').value.toLowerCase();
-            
+            const records = getRecords(),
+                tableTitle = document.getElementById('tableTitle');
+            const filterPlatform = document.getElementById('filterPlatform').value,
+                filterSearch = document.getElementById('filterSearch').value.toLowerCase();
             let filteredRecords = records;
-            if (currentTab !== 'urgent' && currentTab !== 'stats') {
+            if (currentTab === 'urgent') { tableTitle.textContent = '📊 紧急提醒 - 全部达人'; } else if (currentTab ===
+                'recycle') {
+                tableTitle.textContent = '📦 待回收 - 快递 & 素材';
+                filteredRecords = records.filter(r => {
+                    if (r.isDirect) return false;
+                    if (r.coopStatus === '已终止') return false;
+                    if (isFullyCompleted(r)) return false;
+                    const es = getExpressStatus(r),
+                        ms = getMaterialStatus(r);
+                    return es === 'danger' || es === 'warning' || ms === 'danger' || ms === 'warning';
+                });
+            } else if (currentTab !== 'stats') {
                 filteredRecords = records.filter(r => r.brand === currentTab);
                 tableTitle.textContent = `📊 ${currentTab} - 执行进度`;
-            } else {
-                tableTitle.textContent = '📊 紧急提醒 - 全部达人';
             }
-            
             filteredRecords = filteredRecords.filter(r => {
                 if (filterPlatform && r.platform !== filterPlatform) return false;
-                if (filterSearch && !r.nickname.toLowerCase().includes(filterSearch)) return false;
+                if (filterSearch) {
+                    const inName = r.nickname.toLowerCase().includes(filterSearch);
+                    const inNotes = (r.notes || '').toLowerCase().includes(filterSearch);
+                    const inBrand = (r.brand || '').toLowerCase().includes(filterSearch);
+                    if (!inName && !inNotes && !inBrand) return false;
+                }
                 return true;
             });
-            
-            filteredRecords.sort((a,b) => {
-                const pa = getSortPriority(a), pb = getSortPriority(b);
-                if (pa.g !== pb.g) return pa.g - pb.g;
-                return pa.k - pb.k;
-            });
-            
+            filteredRecords.sort((a, b) => { const pa = getSortPriority(a),
+                    pb = getSortPriority(b); if (pa.g !== pb.g) return pa.g - pb.g; return pa.k - pb.k; });
             const allNodeKeys = new Set();
-            filteredRecords.forEach(r => {
-                getTimelineNodes(r.creatorType).forEach(n => allNodeKeys.add(n.key));
-            });
-            const nodeKeys = ['outline','script','draft','videoDraft','publish'].filter(k => allNodeKeys.has(k));
-            const nodeLabels = {
-                'outline':'大纲','script':'脚本','draft':'图文初稿','videoDraft':'视频初稿','publish':'发布时间'
-            };
-            
-            const thead = document.getElementById('tableHead');
-            thead.innerHTML = `
-                <tr>
-                    <th>昵称</th>
-                    <th>平台</th>
-                    <th>类型</th>
-                    <th>品牌</th>
-                    <th>粉丝</th>
-                    <th>执行价</th>
-                    ${nodeKeys.map(k => `<th>${nodeLabels[k]}</th>`).join('')}
-                    <th>寄回</th>
-                    <th>素材</th>
-                    <th>备注</th>
-                    <th>操作</th>
-                </tr>
-            `;
-            
-            const tbody = document.getElementById('tableBody');
-            const colSpan = 6 + nodeKeys.length + 4;
-            
-            if (filteredRecords.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${colSpan}" class="empty-state">暂无匹配记录 📝</td></tr>`;
-            } else {
-                let html = '', currentGroup = -1;
+            filteredRecords.forEach(r => { getTimelineNodes(r.creatorType).forEach(n => allNodeKeys.add(n.key)); });
+            const nodeKeys = ['outline', 'script', 'draft', 'videoDraft', 'publish'].filter(k => allNodeKeys.has(k));
+            const nodeLabels = { 'outline': '大纲', 'script': '脚本', 'draft': '图文初稿', 'videoDraft': '视频初稿',
+                'publish': '发布时间' };
+            document.getElementById('tableHead').innerHTML =
+                `<tr><th>昵称</th><th>平台</th><th>类型</th><th>品牌</th><th>粉丝</th><th>执行价</th>${nodeKeys.map(k=>`<th>${nodeLabels[k]}</th>`).join('')}<th>寄回</th><th>素材</th><th>备注</th><th>操作</th></tr>`;
+            const tbody = document.getElementById('tableBody'),
+                colSpan = 6 + nodeKeys.length + 4;
+            if (filteredRecords.length === 0) { tbody.innerHTML =
+                `<tr><td colspan="${colSpan}" class="empty-state">暂无匹配记录 📝</td></tr>`; } else {
+                let html = '',
+                    currentGroup = -1;
                 filteredRecords.forEach(r => {
-                    const status = getRecordOverallStatus(r);
-                    const realIndex = records.indexOf(r);
-                    const isDone = status === 'done';
-                    const allDone = areAllNodesDone(r);
-                    
-                    if (doneCollapsed && isDone) return;
-                    
-                    if (status === 'danger' && currentGroup !== 0) {
-                        html += `<tr class="group-header"><td colspan="${colSpan}">🔴 需要处理 - 超期或快递/素材待回收</td></tr>`;
-                        currentGroup = 0;
-                    } else if (status === 'warning' && currentGroup !== 1) {
-                        html += `<tr class="group-header"><td colspan="${colSpan}">🟡 需要关注 - 即将到期或等待回收</td></tr>`;
-                        currentGroup = 1;
-                    } else if (status === 'normal' && currentGroup !== 2) {
-                        html += `<tr class="group-header"><td colspan="${colSpan}">🔵 正常进行中</td></tr>`;
-                        currentGroup = 2;
-                    } else if (status === 'paused' && currentGroup !== 4) {
-                        html += `<tr class="group-header"><td colspan="${colSpan}">⏸️ 暂停合作</td></tr>`;
-                        currentGroup = 4;
-                    } else if (status === 'terminated' && currentGroup !== 5) {
-                        html += `<tr class="group-header"><td colspan="${colSpan}">🚫 已终止</td></tr>`;
-                        currentGroup = 5;
-                    } else if (status === 'done' && currentGroup !== 3) {
-                        html += `<tr class="group-header"><td colspan="${colSpan}">✅ 全部完成</td></tr>`;
-                        currentGroup = 3;
-                    }
-                    
+                    const status = getRecordOverallStatus(r),
+                        realIndex = records.indexOf(r),
+                        isHidden = doneCollapsed && (status === 'done' || status === 'paused' ||
+                            status === 'terminated');
+                    if (isHidden) return;
+                    let groupLabel = '';
+                    if (status === 'danger' && currentGroup !== 0) { groupLabel =
+                            '🔴 需要处理 - 超期或快递/素材待回收';
+                        currentGroup = 0; } else if (status === 'warning' && currentGroup !== 1) { groupLabel =
+                            '🟡 需要关注 - 即将到期或等待回收';
+                        currentGroup = 1; } else if (status === 'pause_ending' && currentGroup !== 1) { groupLabel =
+                            '🟡 需要关注 - 暂停结束，请确认档期';
+                        currentGroup = 1; } else if (status === 'normal' && currentGroup !== 2) { groupLabel =
+                            '🔵 正常进行中';
+                        currentGroup = 2; } else if (status === 'paused' && currentGroup !== 3) { groupLabel =
+                            '⏸️ 暂停中';
+                        currentGroup = 3; } else if (status === 'terminated' && currentGroup !== 5) { groupLabel =
+                            '🚫 已终止';
+                        currentGroup = 5; } else if (status === 'done' && currentGroup !== 4) { groupLabel =
+                            '✅ 全部完成';
+                        currentGroup = 4; }
+                    if (groupLabel) html +=
+                        `<tr class="group-header"><td colspan="${colSpan}">${groupLabel}</td></tr>`;
                     let rowClass = '';
                     if (status === 'danger') rowClass = 'danger-row';
-                    else if (status === 'warning') rowClass = 'warning-row';
+                    else if (status === 'warning' || status === 'pause_ending') rowClass = 'warning-row';
                     else if (status === 'done') rowClass = 'done-row';
                     else if (status === 'paused') rowClass = 'paused-row';
                     else if (status === 'terminated') rowClass = 'terminated-row';
-                    
                     let nodeCells = '';
                     nodeKeys.forEach(key => {
                         const nd = r.timeline ? r.timeline[key] : null;
-                        if (!nd || !nd.date) {
-                            nodeCells += '<td><span style="color:#ccc;">—</span></td>';
-                        } else if (nd.done) {
-                            nodeCells += `<td><span class="node-cell node-done">✅ ${nd.date}</span></td>`;
-                        } else {
+                        if (!nd || !nd.date) { nodeCells +=
+                            '<td><span style="color:#ccc;">—</span></td>'; } else if (
+                            nd.done) { nodeCells +=
+                            `<td><span class="node-cell node-done">✅ ${nd.date}</span></td>`; } else {
                             const ns = getNodeStatus(nd.date);
-                            if (ns === 'danger') {
-                                const overdueDays = Math.floor((new Date() - new Date(nd.date))/(1000*60*60*24));
-                                nodeCells += `<td><span class="node-cell node-danger">⚠️ ${nd.date} (超${overdueDays}天)</span></td>`;
-                            } else if (ns === 'warning') {
-                                const remainDays = Math.floor((new Date(nd.date) - new Date())/(1000*60*60*24));
-                                nodeCells += `<td><span class="node-cell node-warning">⚡ ${nd.date} (${remainDays===0?'今天':'明天'})</span></td>`;
-                            } else {
-                                nodeCells += `<td><span class="node-cell node-normal">${nd.date}</span></td>`;
-                            }
+                            if (ns === 'danger') { const od = Math.floor((getToday() - new Date(nd
+                                    .date)) / (1000 * 60 * 60 * 24));
+                                nodeCells +=
+                                    `<td><span class="node-cell node-danger">⚠️ ${nd.date} (超${od}天)</span></td>`; } else if (
+                                    ns === 'warning') { const rd = Math.floor((new Date(nd.date) -
+                                        getToday()) / (1000 * 60 * 60 * 24));
+                                const label = rd === 0 ? '今天到期' : '明天到期';
+                                nodeCells +=
+                                    `<td><span class="node-cell node-warning">⚡ ${nd.date} (${label})</span></td>`; } else { nodeCells +=
+                                    `<td><span class="node-cell node-normal">${nd.date}</span></td>`; }
                         }
                     });
-                    
                     let expressBadge = '';
-                    if (r.sentOut === '否') {
-                        expressBadge = '<span style="color:#ccc;">未寄</span>';
-                    } else if (r.sentBack === '是') {
-                        expressBadge = '<span class="express-status express-yes">📬 已回</span>';
-                    } else {
-                        const es = getExpressStatus(r);
-                        if (es === 'danger') expressBadge = '<span class="express-status express-no">🔴 待回收</span>';
-                        else if (es === 'warning') expressBadge = '<span class="express-status express-warning">🟡 待回收</span>';
-                        else expressBadge = '📦 已寄';
-                    }
-                    
+                    if (r.isDirect) { expressBadge = '<span style="color:#ccc;">—</span>'; } else if (r
+                        .sentOut === '否') { expressBadge = '<span style="color:#ccc;">未寄</span>'; } else if (
+                        r.sentBack === '是' && r.trackingNumber && r.trackingNumber.trim() !== '') {
+                        expressBadge = '<span class="express-status express-yes">📬 已回</span>'; } else if (r
+                        .sentBack === '是') { expressBadge =
+                        '<span class="express-status express-warning">🟡 缺单号</span>'; } else { const es =
+                            getExpressStatus(r); if (es === 'danger') expressBadge =
+                            '<span class="express-status express-no">🔴 待回收</span>'; else if (es ===
+                            'warning') expressBadge =
+                            '<span class="express-status express-warning">🟡 待回收</span>';
+                        else expressBadge = '📦 已寄'; }
                     let materialBadge = '';
-                    if (r.materialReceived === '是') {
-                        materialBadge = '<span class="material-status material-yes">✅ 已给</span>';
-                    } else {
-                        const ms = getMaterialStatus(r);
-                        if (ms === 'danger') materialBadge = '<span class="material-status material-no">🔴 待给</span>';
-                        else if (ms === 'warning') materialBadge = '<span class="material-status material-warning">🟡 待给</span>';
-                        else materialBadge = '<span class="badge badge-purple">未到</span>';
+                    if (r.isDirect) { materialBadge = '<span style="color:#ccc;">—</span>'; } else if (r
+                        .materialReceived === '是') { materialBadge =
+                        '<span class="material-status material-yes">✅ 已给</span>'; } else { const ms =
+                            getMaterialStatus(r); if (ms === 'danger') materialBadge =
+                            '<span class="material-status material-no">🔴 待给</span>'; else if (ms ===
+                            'warning') materialBadge =
+                            '<span class="material-status material-warning">🟡 待给</span>';
+                        else materialBadge = '<span class="badge badge-brand">未到</span>'; }
+                    const noteText = r.notes || '',
+                        noteDisplay = noteText.length > 15 ? noteText.substring(0, 15) + '...' : noteText;
+                    let typeDisplay = r.creatorType;
+                    if (r.isDirect) typeDisplay +=
+                        ' <span class="badge badge-direct">⚡直发</span>';
+                    let pauseInfo = '';
+                    if (r.coopStatus === '暂停') {
+                        pauseInfo = ' ⏸️';
+                        if (r.pauseEnd) pauseInfo += '至' + r.pauseEnd;
                     }
-                    
-                    const noteText = r.notes || '';
-                    const noteDisplay = noteText.length > 12 ? noteText.substring(0,12)+'...' : noteText;
-                    
-                    html += `
-                        <tr class="${rowClass}">
-                            <td><strong>${r.nickname}</strong>${r.profileUrl?` <a href="${r.profileUrl}" target="_blank" class="link-icon">🔗</a>`:''}</td>
-                            <td>${r.platform}</td>
-                            <td>${r.creatorType}</td>
-                            <td><span class="badge badge-purple">${r.brand}</span></td>
-                            <td>${r.followers||'—'}</td>
-                            <td>${r.execPrice||'—'}</td>
-                            ${nodeCells}
-                            <td>${expressBadge}</td>
-                            <td>${materialBadge}</td>
-                            <td><span class="note-cell" title="${noteText.replace(/"/g,'&quot;')}">${noteDisplay||'—'}</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-add" onclick="editRecord(${realIndex})">✏️</button>
-                                <button class="btn btn-sm btn-delete" onclick="deleteRecord(${realIndex})">🗑️</button>
-                            </td>
-                        </tr>
-                    `;
+                    html +=
+                        `<tr class="${rowClass}" data-index="${realIndex}"><td><strong class="clickable-name" onclick="selectRecord(${realIndex})" style="cursor:pointer;color:var(--blue);text-decoration:underline;text-underline-offset:3px;">${r.nickname}</strong>${r.profileUrl?` <a href="${r.profileUrl}" target="_blank" class="link-icon">🔗</a>`:''}${pauseInfo}</td><td>${r.platform}</td><td>${typeDisplay}</td><td><span class="badge badge-brand">${r.brand}</span></td><td>${r.followers||'—'}</td><td>${r.execPrice||'—'}</td>${nodeCells}<td>${expressBadge}</td><td>${materialBadge}</td><td><span class="note-cell" title="${noteText.replace(/"/g,'&quot;')}">${noteDisplay||'—'}</span></td><td><button class="btn btn-sm btn-edit" onclick="editRecord(${realIndex})">✏️</button><button class="btn btn-sm btn-delete" onclick="deleteRecord(${realIndex})">🗑️</button></td></tr>`;
                 });
-                
                 if (doneCollapsed) {
-                    const hiddenCount = filteredRecords.filter(r => getRecordOverallStatus(r) === 'done').length;
-                    if (hiddenCount > 0) {
-                        html += `<tr><td colspan="${colSpan}" style="text-align:center;color:#999;padding:6px;font-size:10px;">📂 已折叠 ${hiddenCount} 条已完成记录</td></tr>`;
-                    }
+                    const hc = filteredRecords.filter(r => {
+                        const s = getRecordOverallStatus(r); return s === 'done' || s === 'paused' || s ===
+                            'terminated';
+                    }).length;
+                    if (hc > 0) html +=
+                        `<tr><td colspan="${colSpan}" style="text-align:center;color:#8c9aa8;padding:8px;font-size:10px;">📂 已折叠 ${hc} 条已完成/暂停/终止记录</td></tr>`;
                 }
                 tbody.innerHTML = html;
+                if (selectedRecordIndex >= 0) {
+                    const selRow = tbody.querySelector(`tr[data-index="${selectedRecordIndex}"]`);
+                    if (selRow) selRow.classList.add('selected-row');
+                }
             }
-            
             updateStats(records);
             renderTabs();
             updateDatalists(records);
+            updateSpeechFromSelection();
+            updateScreenshotReminder();
         }
-        
+
+        function selectRecord(index) {
+            selectedRecordIndex = index;
+            renderTable();
+            const r = getRecords()[index];
+            if (r) fillFormFromRecord(r);
+            updateSpeechFromSelection();
+            document.getElementById('leftPanel').scrollIntoView({ behavior: 'smooth' });
+            document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
+            const speechTab = document.querySelector('[data-ptab="speech"]');
+            if (speechTab) speechTab.classList.add('active');
+            document.getElementById('panelForm').classList.add('hidden');
+            document.getElementById('panelSpeech').classList.remove('hidden');
+            document.getElementById('panelBrands').classList.add('hidden');
+        }
+
         function updateStats(records) {
-            let dangerCount = 0, warningCount = 0, doneCount = 0;
-            records.forEach(r => {
-                const status = getRecordOverallStatus(r);
-                if (status === 'danger') dangerCount++;
-                if (status === 'warning') warningCount++;
-                if (status === 'done') doneCount++;
-            });
+            let dc = 0,
+                wc = 0,
+                oc = 0;
+            records.forEach(r => { const s = getRecordOverallStatus(r); if (s === 'danger') dc++; if (s === 'warning' ||
+                    s === 'pause_ending') wc++; if (s === 'done') oc++; });
             document.getElementById('statTotal').textContent = records.length;
-            document.getElementById('statDanger').textContent = dangerCount;
-            document.getElementById('statWarning').textContent = warningCount;
-            document.getElementById('statDone').textContent = doneCount;
+            document.getElementById('statDanger').textContent = dc;
+            document.getElementById('statWarning').textContent = wc;
+            document.getElementById('statDone').textContent = oc;
         }
-        
+
         function updateDatalists(records) {
-            const nicknames = [...new Set(records.map(r=>r.nickname))].sort();
-            const brands = [...new Set(records.map(r=>r.brand))].sort();
-            document.getElementById('nicknameList').innerHTML = nicknames.map(n=>`<option value="${n}">`).join('');
-            document.getElementById('brandList').innerHTML = brands.map(b=>`<option value="${b}">`).join('');
+            const nn = [...new Set(records.map(r => r.nickname))].sort(),
+                bb = [...new Set(records.map(r => r.brand))].sort();
+            document.getElementById('nicknameList').innerHTML = nn.map(n => `<option value="${n}">`).join('');
+            document.getElementById('brandList').innerHTML = bb.map(b => `<option value="${b}">`).join('');
         }
-        
-        function buildStatFilters() {
-            const records = getRecords();
-            const months = new Set();
-            records.forEach(r => {
-                const pubDate = getPublishDate(r);
-                if (pubDate) months.add(pubDate.substring(0,7));
-            });
-            const sortedMonths = [...months].sort();
-            document.getElementById('statMonth').innerHTML = '<option value="">全部月份</option>' + sortedMonths.map(m => `<option value="${m}">${m}</option>`).join('');
-            
-            const brands = [...new Set(records.map(r=>r.brand))].sort();
-            document.getElementById('statBrand').innerHTML = '<option value="">全部品牌</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
-        }
-        
-        function runStats() {
-            const records = getRecords();
-            const filterMonth = document.getElementById('statMonth').value;
-            const filterBrand = document.getElementById('statBrand').value;
-            const filterType = document.getElementById('statType').value;
-            const filterPlatform = document.getElementById('statPlatform').value;
-            
-            let filtered = records.filter(r => {
-                const pubDate = getPublishDate(r);
-                if (filterMonth && (!pubDate || !pubDate.startsWith(filterMonth))) return false;
-                if (filterBrand && r.brand !== filterBrand) return false;
-                if (filterType && r.creatorType !== filterType) return false;
-                if (filterPlatform && r.platform !== filterPlatform) return false;
-                return true;
-            });
-            
-            const total = filtered.length;
-            const doneCount = filtered.filter(r => getRecordOverallStatus(r) === 'done').length;
-            const activeCount = total - doneCount;
-            
-            const brandCount = {};
-            filtered.forEach(r => { brandCount[r.brand] = (brandCount[r.brand] || 0) + 1; });
-            
-            const typeCount = {};
-            filtered.forEach(r => { typeCount[r.creatorType] = (typeCount[r.creatorType] || 0) + 1; });
-            
-            document.getElementById('statResult').innerHTML = `
-                <div class="stat-result-card"><div class="big">${total}</div><div class="small">筛选结果</div></div>
-                <div class="stat-result-card"><div class="big" style="color:#27ae60;">${doneCount}</div><div class="small">已完成</div></div>
-                <div class="stat-result-card"><div class="big" style="color:#e74c3c;">${activeCount}</div><div class="small">进行中</div></div>
-            `;
-            
-            let detailHtml = '<h4 style="margin-bottom:8px;">品牌分布</h4>';
-            detailHtml += '<table class="stat-detail-table"><thead><tr><th>品牌</th><th>数量</th></tr></thead><tbody>';
-            Object.entries(brandCount).sort((a,b) => b[1]-a[1]).forEach(([brand, count]) => {
-                detailHtml += `<tr><td>${brand}</td><td>${count}</td></tr>`;
-            });
-            detailHtml += '</tbody></table>';
-            
-            if (Object.keys(typeCount).length > 0) {
-                detailHtml += '<h4 style="margin:12px 0 8px;">类型分布</h4>';
-                detailHtml += '<table class="stat-detail-table"><thead><tr><th>类型</th><th>数量</th></tr></thead><tbody>';
-                Object.entries(typeCount).sort((a,b) => b[1]-a[1]).forEach(([type, count]) => {
-                    detailHtml += `<tr><td>${type}</td><td>${count}</td></tr>`;
-                });
-                detailHtml += '</tbody></table>';
+
+        // ============ SPEECH ============
+        function updateSpeechFromSelection() {
+            let r = null;
+            if (selectedRecordIndex >= 0) {
+                const records = getRecords();
+                if (selectedRecordIndex < records.length) r = records[selectedRecordIndex];
             }
-            
-            document.getElementById('statDetailTable').innerHTML = detailHtml;
-        }
-        
-        function exportStatCSV() {
-            const records = getRecords();
-            const filterMonth = document.getElementById('statMonth').value;
-            const filterBrand = document.getElementById('statBrand').value;
-            const filterType = document.getElementById('statType').value;
-            const filterPlatform = document.getElementById('statPlatform').value;
-            
-            let filtered = records.filter(r => {
-                const pubDate = getPublishDate(r);
-                if (filterMonth && (!pubDate || !pubDate.startsWith(filterMonth))) return false;
-                if (filterBrand && r.brand !== filterBrand) return false;
-                if (filterType && r.creatorType !== filterType) return false;
-                if (filterPlatform && r.platform !== filterPlatform) return false;
-                return true;
-            });
-            
-            if (filtered.length === 0) { alert('没有匹配数据'); return; }
-            
-            const headers = ['昵称','平台','类型','品牌','粉丝量','执行价','主页链接','发布档期','大纲','大纲完成','脚本','脚本完成','图文初稿','图文初稿完成','视频初稿','视频初稿完成','发布时间','发布时间完成','寄出','寄回','单号','素材','合作状态','备注'];
-            const rows = filtered.map(r => exportRecordToRow(r));
-            
-            downloadCSV([headers, ...rows], `数据筛查_${new Date().toISOString().split('T')[0]}.csv`);
-        }
-        
-        function saveRecord() {
-            const nickname = document.getElementById('nickname').value.trim();
-            const platform = document.getElementById('platform').value;
-            const creatorType = document.getElementById('creatorType').value;
-            const brand = document.getElementById('brand').value.trim();
-            const followers = document.getElementById('followers').value.trim();
-            const profileUrl = document.getElementById('profileUrl').value.trim();
-            const execPrice = document.getElementById('execPrice').value.trim();
-            const publishDate = document.getElementById('publishDate').value;
-            const coopStatus = document.getElementById('coopStatus').value;
-            const timeline = getTimelineData();
-            const sentOut = document.getElementById('sentOut').value;
-            const sentBack = document.getElementById('sentBack').value;
-            const trackingNumber = document.getElementById('trackingNumber').value.trim();
-            const materialReceived = document.getElementById('materialReceived').value;
-            const notes = document.getElementById('notes').value.trim();
-            const editId = document.getElementById('editId').value;
-            
-            if (!nickname || !platform || !creatorType || !brand) {
-                alert('请填写所有必填项（带 * 的字段）'); return;
+            const isVideo = r && r.creatorType === '视频达人';
+            document.getElementById('speechScheduleText').style.display = isVideo ? 'none' : '';
+            document.getElementById('speechScheduleVideo').style.display = isVideo ? '' : 'none';
+            document.getElementById('speechTypeLabel').textContent = isVideo ? '视频达人' : '图文达人';
+            let outlineDate = '',
+                draftDate = '',
+                scriptDate = '',
+                videoDraftDate = '',
+                publishDate = '';
+            if (r && r.timeline) {
+                outlineDate = (r.timeline['outline'] || {}).date || '';
+                draftDate = (r.timeline['draft'] || {}).date || '';
+                scriptDate = (r.timeline['script'] || {}).date || '';
+                videoDraftDate = (r.timeline['videoDraft'] || {}).date || '';
+                publishDate = (r.timeline['publish'] || {}).date || '';
             }
-            
-            const record = {
-                nickname, platform, creatorType, brand,
-                followers, profileUrl, execPrice, publishDate,
-                coopStatus, timeline, sentOut, sentBack, trackingNumber, materialReceived, notes,
-                createdAt: new Date().toISOString()
+            if (r && r.publishDate && !publishDate) publishDate = r.publishDate;
+            const textSchedule = `宝，排期给下哈：\n大纲：${outlineDate}\n图文：${draftDate}\n发布档期：${publishDate}\n‼️发布档期当天只能单发品牌一篇笔记\n寄出同步单号~\n‼️‼️未经品牌审核通过，擅自推进拍摄不合格的自行承担重拍后果`;
+            document.getElementById('speechSchedule').textContent = textSchedule;
+            const textScheduleVideo = `宝，排期给下哈：\n大纲：${outlineDate}\n脚本：${scriptDate}\n视频初稿：${videoDraftDate}\n发布档期：${publishDate}\n‼️发布档期当天只能单发品牌一篇笔记\n寄出同步单号~\n‼️‼️未经品牌审核通过，擅自推进拍摄不合格的自行承担重拍后果`;
+            document.getElementById('speechScheduleVideoContent').textContent = textScheduleVideo;
+            let brandAddr = '';
+            if (r) {
+                const bi = getBrandInfo();
+                if (bi[r.brand] && bi[r.brand].address) brandAddr = bi[r.brand].address;
+            }
+            const textReturn =
+                `宝子产品辛苦【顺丰到付】寄到这个地址（${brandAddr||'【品牌地址】'}）产品各个组件原封放回！！寄出前录下封箱视频丢群里~\n寄出后同步单号哈`;
+            document.getElementById('speechReturnContent').textContent = textReturn;
+        }
+
+        function copySpeech(type) {
+            let text = '';
+            if (type === 'schedule') text = document.getElementById('speechSchedule').textContent;
+            else if (type === 'scheduleVideo') text = document.getElementById('speechScheduleVideoContent').textContent;
+            else if (type === 'return') text = document.getElementById('speechReturnContent').textContent;
+            if (!text.trim()) { alert('请先在表格中选择一位达人'); return; }
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ 已复制到剪贴板，可直接粘贴到群里');
+            }).catch(() => { alert('复制失败，请手动选中文字复制'); });
+        }
+
+        // ============ BRAND CARDS ============
+        function renderBrandCards() {
+            const bi = getBrandInfo();
+            const records = getRecords();
+            const allBrands = [...new Set([...records.map(r => r.brand), ...Object.keys(bi)])].filter(Boolean).sort();
+            const container = document.getElementById('brandCardsContainer');
+            if (allBrands.length === 0) { container.innerHTML =
+                '<p style="color:#8c9aa8;font-size:11px;">暂无品牌数据，保存达人记录后自动生成品牌卡片</p>'; return; }
+            let html = '';
+            allBrands.forEach(brand => {
+                const info = bi[brand] || { address: '', notes: '' };
+                html += `
+            <div class="brand-card">
+              <h4>🏷️ ${brand}</h4>
+              <div class="info-row"><span class="info-label">📍寄回地址：</span><span>${info.address||'未填写'}</span> <button class="btn btn-sm btn-copy" style="margin-left:6px;" onclick="copyBrandAddress('${brand.replace(/'/g,"\\'")}')">📋复制</button></div>
+              <div class="form-group" style="margin-top:6px;"><label>⚠️ 审核要点</label><textarea id="brandNotes_${brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g,'_')}" onchange="saveBrandNotes('${brand.replace(/'/g,"\\'")}')">${info.notes||''}</textarea></div>
+              <div class="form-group"><label>📍 寄回地址</label><input type="text" id="brandAddr_${brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g,'_')}" value="${info.address||''}" onchange="saveBrandAddr('${brand.replace(/'/g,"\\'")}')" placeholder="输入寄回地址"></div>
+            </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function saveBrandNotes(brand) {
+            const bi = getBrandInfo();
+            if (!bi[brand]) bi[brand] = { address: '', notes: '' };
+            const el = document.getElementById('brandNotes_' + brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, '_'));
+            if (el) bi[brand].notes = el.value;
+            saveBrandInfo(bi);
+            updateSpeechFromSelection();
+        }
+
+        function saveBrandAddr(brand) {
+            const bi = getBrandInfo();
+            if (!bi[brand]) bi[brand] = { address: '', notes: '' };
+            const el = document.getElementById('brandAddr_' + brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, '_'));
+            if (el) bi[brand].address = el.value;
+            saveBrandInfo(bi);
+            updateSpeechFromSelection();
+        }
+
+        function copyBrandAddress(brand) {
+            const bi = getBrandInfo();
+            const addr = (bi[brand] && bi[brand].address) ? bi[brand].address : '';
+            if (!addr) { alert('该品牌未填写寄回地址'); return; }
+            navigator.clipboard.writeText(addr).then(() => { alert('✅ 地址已复制'); }).catch(() => { alert('复制失败'); });
+        }
+
+        // ============ SCREENSHOT REMINDER ============
+        function updateScreenshotReminder() {
+            const el = document.getElementById('screenshotReminder');
+            const today = getToday();
+            const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            const daysLeft = Math.floor((lastDayOfMonth - today) / (1000 * 60 * 60 * 24)) + 1;
+            if (daysLeft > 5 || daysLeft < 0) { el.classList.remove('show'); return; }
+            const records = getRecords();
+            const monthStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
+            const published = records.filter(r => {
+                const pd = getPublishDate(r);
+                if (!pd) return false;
+                const p = new Date(pd);
+                p.setHours(0, 0, 0, 0);
+                if (p > today) return false;
+                return pd.startsWith(monthStr);
+            });
+            if (published.length === 0) { el.classList.remove('show'); return; }
+            const brandCounts = {};
+            published.forEach(r => { brandCounts[r.brand] = (brandCounts[r.brand] || 0) + 1; });
+            let detailStr = Object.entries(brandCounts).map(([b, c]) => `${b}：${c}条`).join(' · ');
+            el.innerHTML = `📸 <strong>本月截图提醒</strong>（${monthStr}） — 已发布 <strong>${published.length}</strong> 条 | ${detailStr} | 请于月底前完成截图`;
+            el.classList.add('show');
+        }
+
+        // ============ BACKUP/RESTORE ============
+        function backupData() {
+            const data = { records: getRecords(), brandInfo: getBrandInfo(), exportedAt: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `达人管理_备份_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('✅ 备份完成！文件已下载。');
+        }
+
+        function restoreData() { document.getElementById('restoreFileInput').click(); }
+
+        function handleRestore(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if (data.records && Array.isArray(data.records)) {
+                        saveRecords(data.records);
+                        if (data.brandInfo) saveBrandInfo(data.brandInfo);
+                        alert(`✅ 恢复成功！共恢复 ${data.records.length} 条记录`);
+                        location.reload();
+                    } else { alert('文件格式不正确'); }
+                } catch (e) { alert('文件解析失败，请确认是备份文件'); }
             };
-            
-            const records = getRecords();
-            if (editId !== '') records[parseInt(editId)] = record;
-            else records.push(record);
-            
-            saveRecords(records);
-            resetForm();
-            renderTabs();
-            if (currentTab === 'stats') { buildStatFilters(); runStats(); }
-            else renderTable();
+            reader.readAsText(file, 'UTF-8');
+            event.target.value = '';
         }
-        
-        function editRecord(index) {
-            const records = getRecords();
-            const r = records[index];
-            fillFormFromRecord(r);
-            document.getElementById('editId').value = index;
-            document.getElementById('formTitle').textContent = '✏️ 编辑达人任务';
-            document.getElementById('btnCancel').hidden = false;
-            document.getElementById('formPanel').scrollIntoView({behavior:'smooth'});
-        }
-        
-        function cancelEdit() { resetForm(); }
-        
-        function resetForm() {
-            document.getElementById('nickname').value='';
-            document.getElementById('platform').value='';
-            document.getElementById('creatorType').value='';
-            document.getElementById('timelineNodes').innerHTML='<p style="color:#999;font-size:11px;">请先选择达人类型</p>';
-            document.getElementById('brand').value='';
-            document.getElementById('followers').value='';
-            document.getElementById('profileUrl').value='';
-            document.getElementById('execPrice').value='';
-            document.getElementById('publishDate').value='';
-            document.getElementById('coopStatus').value='正常合作';
-            document.getElementById('sentOut').value='否';
-            document.getElementById('sentBack').value='否';
-            document.getElementById('trackingNumber').value='';
-            document.getElementById('materialReceived').value='否';
-            document.getElementById('notes').value='';
-            document.getElementById('editId').value='';
-            document.getElementById('formTitle').textContent='➕ 新增达人任务';
-            document.getElementById('btnCancel').hidden=true;
-        }
-        
-        function deleteRecord(index) {
-            if(!confirm('确定要删除这条记录吗？')) return;
-            const records = getRecords();
-            records.splice(index,1);
-            saveRecords(records);
-            renderTabs();
-            if (currentTab === 'stats') { buildStatFilters(); runStats(); }
-            else renderTable();
-        }
-        
-        function scrollToForm() {
-            switchTab('urgent');
-            document.getElementById('formPanel').scrollIntoView({behavior:'smooth'});
-        }
-        
+
+        // ============ CSV ============
         function exportRecordToRow(r) {
             const tl = r.timeline || {};
-            return [
-                r.nickname, r.platform, r.creatorType, r.brand,
-                r.followers||'', r.execPrice||'', r.profileUrl||'', r.publishDate||'',
-                (tl.outline||{}).date||'', (tl.outline||{}).done?'是':'否',
-                (tl.script||{}).date||'', (tl.script||{}).done?'是':'否',
-                (tl.draft||{}).date||'', (tl.draft||{}).done?'是':'否',
-                (tl.videoDraft||{}).date||'', (tl.videoDraft||{}).done?'是':'否',
-                (tl.publish||{}).date||'', (tl.publish||{}).done?'是':'否',
-                r.sentOut||'否', r.sentBack||'否', r.trackingNumber||'', r.materialReceived||'否',
-                r.coopStatus||'正常合作', r.notes||''
+            return [r.nickname, r.platform, r.creatorType, r.brand, r.followers || '', r.execPrice || '', r.profileUrl || '',
+                r.publishDate || '', (tl.outline || {}).date || '', (tl.outline || {}).done ? '是' : '否', (tl.script ||
+                    {}).date || '', (tl.script || {}).done ? '是' : '否', (tl.draft || {}).date || '', (tl.draft || {})
+                .done ? '是' : '否', (tl.videoDraft || {}).date || '', (tl.videoDraft || {}).done ? '是' : '否', (tl
+                    .publish || {}).date || '', (tl.publish || {}).done ? '是' : '否', r.sentOut || '否', r.sentBack ||
+                '否', r.trackingNumber || '', r.materialReceived || '否', r.coopStatus || '正常合作', r.notes || '',
+                r.isDirect ? '是' : '否', r.pauseStart || '', r.pauseEnd || ''
             ];
         }
-        
+
         function downloadCSV(rows, filename) {
-            const BOM='\uFEFF';
-            const csv=BOM+rows.map(row=>row.map(c=>`"${c}"`).join(',')).join('\n');
-            const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-            const url=URL.createObjectURL(blob);
-            const a=document.createElement('a');
-            a.href=url; a.download=filename;
-            a.click(); URL.revokeObjectURL(url);
+            const BOM = '\uFEFF',
+                csv = BOM + rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }),
+                url = URL.createObjectURL(blob),
+                a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
         }
-        
+
         function exportCSV() {
             const records = getRecords();
-            if(records.length===0){alert('没有数据可导出');return;}
-            const headers = ['昵称','平台','类型','品牌','粉丝量','执行价','主页链接','发布档期','大纲','大纲完成','脚本','脚本完成','图文初稿','图文初稿完成','视频初稿','视频初稿完成','发布时间','发布时间完成','寄出','寄回','单号','素材','合作状态','备注'];
-            const rows = records.map(r => exportRecordToRow(r));
-            downloadCSV([headers, ...rows], `达人执行进度_${new Date().toISOString().split('T')[0]}.csv`);
+            if (records.length === 0) { alert('没有数据可导出'); return; }
+            const headers = ['昵称', '平台', '类型', '品牌', '粉丝量', '执行价', '主页链接', '发布档期', '大纲', '大纲完成', '脚本', '脚本完成',
+                '图文初稿', '图文初稿完成', '视频初稿', '视频初稿完成', '发布时间', '发布时间完成', '寄出', '寄回', '单号', '素材', '合作状态', '备注',
+                '直发达人', '暂停开始', '暂停结束'
+            ];
+            downloadCSV([headers, ...records.map(r => exportRecordToRow(r))],
+                `达人执行进度_${new Date().toISOString().split('T')[0]}.csv`);
         }
-        
+
         function importCSV() {
             const input = document.createElement('input');
             input.type = 'file';
@@ -1208,89 +1756,258 @@
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = function(ev) {
-                    const text = ev.target.result;
-                    const lines = text.split('\n').filter(l => l.trim());
+                    const text = ev.target.result,
+                        lines = text.split('\n').filter(l => l.trim());
                     if (lines.length < 2) { alert('CSV文件为空'); return; }
-                    
-                    // 解析CSV（支持引号包裹的字段）
+
                     function parseCSVLine(line) {
                         const result = [];
-                        let current = '';
-                        let inQuotes = false;
-                        for (let i = 0; i < line.length; i++) {
-                            const ch = line[i];
-                            if (ch === '"') {
-                                inQuotes = !inQuotes;
-                            } else if (ch === ',' && !inQuotes) {
-                                result.push(current.trim());
-                                current = '';
-                            } else {
-                                current += ch;
-                            }
-                        }
+                        let current = '',
+                            inQuotes = false;
+                        for (let i = 0; i < line.length; i++) { const ch = line[i]; if (ch === '"')
+                                inQuotes = !inQuotes; else if (ch === ',' && !inQuotes) { result.push(
+                                    current.trim());
+                                current = ''; } else current += ch; }
                         result.push(current.trim());
                         return result;
                     }
-                    
-                    const headers = parseCSVLine(lines[0]);
                     const newRecords = [];
-                    
                     for (let i = 1; i < lines.length; i++) {
                         const values = parseCSVLine(lines[i]);
-                        if (values.length < 24) continue; // 跳过不完整的行
-                        
-                        const record = {
-                            nickname: values[0] || '',
-                            platform: values[1] || '',
-                            creatorType: values[2] || '',
-                            brand: values[3] || '',
-                            followers: values[4] || '',
-                            execPrice: values[5] || '',
-                            profileUrl: values[6] || '',
-                            publishDate: values[7] || '',
-                            timeline: {},
-                            sentOut: values[18] || '否',
-                            sentBack: values[19] || '否',
-                            trackingNumber: values[20] || '',
-                            materialReceived: values[21] || '否',
-                            coopStatus: values[22] || '正常合作',
-                            notes: values[23] || '',
-                            createdAt: new Date().toISOString()
-                        };
-                        
+                        if (values.length < 24) continue;
+                        const record = { nickname: values[0] || '', platform: values[1] || '', creatorType: values[
+                                2] || '', brand: values[3] || '', followers: values[4] || '', execPrice: values[
+                                5] || '', profileUrl: values[6] || '', publishDate: values[7] || '',
+                            timeline: {}, sentOut: values[18] || '否', sentBack: values[19] || '否',
+                            trackingNumber: values[20] || '', materialReceived: values[21] || '否', coopStatus: values[
+                                22] || '正常合作', notes: values[23] || '', isDirect: values[24] === '是',
+                            pauseStart: values[25] || '', pauseEnd: values[26] || '', createdAt: new Date()
+                                .toISOString() };
                         if (values[8]) record.timeline['outline'] = { date: values[8], done: values[9] === '是' };
                         if (values[10]) record.timeline['script'] = { date: values[10], done: values[11] === '是' };
                         if (values[12]) record.timeline['draft'] = { date: values[12], done: values[13] === '是' };
-                        if (values[14]) record.timeline['videoDraft'] = { date: values[14], done: values[15] === '是' };
+                        if (values[14]) record.timeline['videoDraft'] = { date: values[14], done: values[15] ===
+                                '是' };
                         if (values[16]) record.timeline['publish'] = { date: values[16], done: values[17] === '是' };
-                        
                         newRecords.push(record);
                     }
-                    
-                    if (newRecords.length === 0) { alert('未解析到数据，请确认CSV格式正确'); return; }
-                    
+                    if (newRecords.length === 0) { alert('未解析到数据'); return; }
                     const choice = confirm('点"确定"追加到现有数据后面\n点"取消"覆盖现有数据');
                     const records = choice ? [...getRecords(), ...newRecords] : newRecords;
                     saveRecords(records);
                     renderTabs();
-                    if (currentTab === 'stats') { buildStatFilters(); runStats(); }
-                    else renderTable();
+                    if (currentTab === 'stats') { buildStatFilters();
+                        runStats(); } else renderTable();
                     alert(`成功导入 ${newRecords.length} 条记录`);
                 };
                 reader.readAsText(file, 'UTF-8');
             };
             input.click();
         }
-        
+
+        // ============ STATS ============
+        function buildStatFilters() {
+            const records = getRecords(),
+                months = new Set();
+            records.forEach(r => { const pd = getPublishDate(r); if (pd) months.add(pd.substring(0, 7)); });
+            document.getElementById('statMonth').innerHTML = '<option value="">全部月份</option>' + [...months].sort().map(
+                m => `<option value="${m}">${m}</option>`).join('');
+            const brands = [...new Set(records.map(r => r.brand))].sort();
+            document.getElementById('statBrand').innerHTML = '<option value="">全部品牌</option>' + brands.map(b =>
+                `<option value="${b}">${b}</option>`).join('');
+        }
+
+        function runStats() {
+            const records = getRecords(),
+                fm = document.getElementById('statMonth').value,
+                fb = document.getElementById('statBrand').value,
+                ft = document.getElementById('statType').value,
+                fp = document.getElementById('statPlatform').value;
+            let filtered = records.filter(r => { const pd = getPublishDate(r); if (fm && (!pd || !pd.startsWith(fm)))
+                    return false; if (fb && r.brand !== fb) return false; if (ft && r.creatorType !== ft) return
+                    false; if (fp && r.platform !== fp) return false; return true; });
+            const total = filtered.length,
+                dc = filtered.filter(r => getRecordOverallStatus(r) === 'done').length,
+                ac = total - dc;
+            const bc = {};
+            filtered.forEach(r => { bc[r.brand] = (bc[r.brand] || 0) + 1; });
+            const tc = {};
+            filtered.forEach(r => { tc[r.creatorType] = (tc[r.creatorType] || 0) + 1; });
+            document.getElementById('statResult').innerHTML =
+                `<div class="stat-result-card"><div class="big">${total}</div><div class="small">筛选结果</div></div><div class="stat-result-card"><div class="big" style="color:#27ae60;">${dc}</div><div class="small">已完成</div></div><div class="stat-result-card"><div class="big" style="color:#e74c3c;">${ac}</div><div class="small">进行中</div></div>`;
+            let dh =
+                '<h4 style="margin-bottom:8px;">品牌分布</h4><table class="stat-detail-table"><thead><tr><th>品牌</th><th>数量</th></tr></thead><tbody>';
+            Object.entries(bc).sort((a, b) => b[1] - a[1]).forEach(([b, c]) => { dh +=
+                `<tr><td>${b}</td><td>${c}</td></tr>`; });
+            dh += '</tbody></table>';
+            if (Object.keys(tc).length > 0) { dh +=
+                '<h4 style="margin:12px 0 8px;">类型分布</h4><table class="stat-detail-table"><thead><tr><th>类型</th><th>数量</th></tr></thead><tbody>';
+                Object.entries(tc).sort((a, b) => b[1] - a[1]).forEach(([t, c]) => { dh +=
+                    `<tr><td>${t}</td><td>${c}</td></tr>`; });
+                dh += '</tbody></table>'; }
+            document.getElementById('statDetailTable').innerHTML = dh;
+        }
+
+        function exportStatCSV() {
+            const records = getRecords(),
+                fm = document.getElementById('statMonth').value,
+                fb = document.getElementById('statBrand').value,
+                ft = document.getElementById('statType').value,
+                fp = document.getElementById('statPlatform').value;
+            let filtered = records.filter(r => { const pd = getPublishDate(r); if (fm && (!pd || !pd.startsWith(fm)))
+                    return false; if (fb && r.brand !== fb) return false; if (ft && r.creatorType !== ft) return
+                    false; if (fp && r.platform !== fp) return false; return true; });
+            if (filtered.length === 0) { alert('没有匹配数据'); return; }
+            const headers = ['昵称', '平台', '类型', '品牌', '粉丝量', '执行价', '主页链接', '发布档期', '大纲', '大纲完成', '脚本', '脚本完成',
+                '图文初稿', '图文初稿完成', '视频初稿', '视频初稿完成', '发布时间', '发布时间完成', '寄出', '寄回', '单号', '素材', '合作状态', '备注'
+            ];
+            downloadCSV([headers, ...filtered.map(r => exportRecordToRow(r))],
+                `数据筛查_${new Date().toISOString().split('T')[0]}.csv`);
+        }
+
+        // ============ CRUD ============
+        function saveRecord() {
+            const nickname = document.getElementById('nickname').value.trim(),
+                platform = document.getElementById('platform').value,
+                creatorType = document.getElementById('creatorType').value,
+                brand = document.getElementById('brand').value.trim();
+            const followers = document.getElementById('followers').value.trim(),
+                profileUrl = document.getElementById('profileUrl').value.trim(),
+                execPrice = document.getElementById('execPrice').value.trim(),
+                publishDate = document.getElementById('publishDate').value;
+            const coopStatus = document.getElementById('coopStatus').value,
+                isDirect = document.getElementById('isDirect').checked;
+            const timeline = getTimelineData(),
+                sentOut = document.getElementById('sentOut').value,
+                sentBack = document.getElementById('sentBack').value;
+            const trackingNumber = document.getElementById('trackingNumber').value.trim(),
+                materialReceived = document.getElementById('materialReceived').value,
+                notes = document.getElementById('notes').value.trim();
+            const pauseStart = document.getElementById('pauseStart').value,
+                pauseEnd = document.getElementById('pauseEnd').value;
+            const editId = document.getElementById('editId').value;
+            if (!nickname || !platform || !creatorType || !brand) { alert('请填写所有必填项（带 * 的字段）'); return; }
+            const record = { nickname, platform, creatorType, brand, followers, profileUrl, execPrice, publishDate,
+                coopStatus, isDirect, timeline, sentOut, sentBack, trackingNumber, materialReceived, notes,
+                pauseStart, pauseEnd, createdAt: new Date().toISOString() };
+            const records = getRecords();
+            if (editId !== '') records[parseInt(editId)] = record;
+            else records.push(record);
+            saveRecords(records);
+            resetForm();
+            selectedRecordIndex = -1;
+            renderTabs();
+            if (currentTab === 'stats') { buildStatFilters();
+                runStats(); } else renderTable();
+            renderBrandCards();
+        }
+
+        function editRecord(index) {
+            const records = getRecords(),
+                r = records[index];
+            document.getElementById('editId').value = index;
+            selectedRecordIndex = index;
+            fillFormFromRecord(r);
+            document.getElementById('btnCancel').hidden = false;
+            document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-ptab="form"]').classList.add('active');
+            document.getElementById('panelForm').classList.remove('hidden');
+            document.getElementById('panelSpeech').classList.add('hidden');
+            document.getElementById('panelBrands').classList.add('hidden');
+            document.getElementById('leftPanel').scrollIntoView({ behavior: 'smooth' });
+            renderTable();
+        }
+
+        function cancelEdit() { resetForm();
+            selectedRecordIndex = -1;
+            renderTable(); }
+
+        function resetForm() {
+            document.getElementById('nickname').value = '';
+            document.getElementById('platform').value = '';
+            document.getElementById('creatorType').value = '';
+            document.getElementById('isDirect').checked = false;
+            onDirectChange();
+            document.getElementById('timelineNodes').innerHTML =
+            '<p style="color:#8c9aa8;font-size:11px;">请先选择达人类型</p>';
+            document.getElementById('brand').value = '';
+            document.getElementById('followers').value = '';
+            document.getElementById('profileUrl').value = '';
+            document.getElementById('execPrice').value = '';
+            document.getElementById('publishDate').value = '';
+            document.getElementById('coopStatus').value = '正常合作';
+            document.getElementById('pauseStart').value = '';
+            document.getElementById('pauseEnd').value = '';
+            document.getElementById('pauseDateSection').style.display = 'none';
+            document.getElementById('sentOut').value = '否';
+            document.getElementById('sentBack').value = '否';
+            document.getElementById('trackingNumber').value = '';
+            document.getElementById('materialReceived').value = '否';
+            document.getElementById('notes').value = '';
+            document.getElementById('editId').value = '';
+            document.getElementById('btnCancel').hidden = true;
+            document.getElementById('expressSection').style.display = '';
+            document.getElementById('materialSection').style.display = '';
+        }
+
+        function deleteRecord(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const records = getRecords();
+            records.splice(index, 1);
+            saveRecords(records);
+            if (selectedRecordIndex === index) selectedRecordIndex = -1;
+            renderTabs();
+            if (currentTab === 'stats') { buildStatFilters();
+                runStats(); } else renderTable();
+            renderBrandCards();
+        }
+
+        function scrollToForm() {
+            switchTab('urgent');
+            selectedRecordIndex = -1;
+            resetForm();
+            document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-ptab="form"]').classList.add('active');
+            document.getElementById('panelForm').classList.remove('hidden');
+            document.getElementById('panelSpeech').classList.add('hidden');
+            document.getElementById('panelBrands').classList.add('hidden');
+            document.getElementById('leftPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ============ PANEL TABS ============
+        document.querySelectorAll('.panel-tab').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const ptab = this.dataset.ptab;
+                document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('panelForm').classList.toggle('hidden', ptab !== 'form');
+                document.getElementById('panelSpeech').classList.toggle('hidden', ptab !== 'speech');
+                document.getElementById('panelBrands').classList.toggle('hidden', ptab !== 'brands');
+                if (ptab === 'speech') updateSpeechFromSelection();
+                if (ptab === 'brands') renderBrandCards();
+            });
+        });
+
+        // ============ TODAY DISPLAY ============
+        function updateTodayDisplay() {
+            const t = new Date();
+            const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            document.getElementById('todayDisplay').textContent =
+                `📅 ${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日 ${weekdays[t.getDay()]}`;
+        }
+
+        // ============ INIT ============
+        updateTodayDisplay();
         updateTimelineForm();
         renderTabs();
         renderTable();
+        renderBrandCards();
+        updateScreenshotReminder();
         setInterval(() => {
+            updateTodayDisplay();
             if (currentTab !== 'stats') renderTable();
+            updateScreenshotReminder();
         }, 60000);
-        
-        console.log('✅ 达人执行进度管理系统 v7 已就绪');
-        console.log('📌 修复：快递素材基于发布时间提醒 | 新增：CSV导入导出完全匹配');
     </script>
 </body>
 </html>
