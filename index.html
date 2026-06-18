@@ -40,7 +40,6 @@
             padding: 18px;
             font-size: 13px;
             line-height: 1.5;
-            min-height: 100vh;
         }
 
         .container {
@@ -72,7 +71,6 @@
             font-weight: 400;
         }
         .header-right {
-            text-align: right;
             font-size: 11px;
             opacity: 0.9;
             font-weight: 500;
@@ -118,6 +116,20 @@
         }
         .stat-card.done .number {
             color: var(--green);
+        }
+
+        .screenshot-reminder {
+            background: #fffdf0;
+            border: 1px solid #f0e080;
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            font-size: 11px;
+            color: #856404;
+            display: none;
+        }
+        .screenshot-reminder.show {
+            display: block;
         }
 
         .tabs-nav {
@@ -206,7 +218,6 @@
             display: flex;
             border-bottom: 1px solid #eef1f5;
             background: #fafbfc;
-            cursor: pointer;
         }
         .panel-tab {
             flex: 1;
@@ -221,9 +232,8 @@
             transition: all 0.2s;
             text-align: center;
             border-bottom: 2px solid transparent;
-            position: relative;
-            z-index: 1;
             pointer-events: auto;
+            z-index: 1;
         }
         .panel-tab:hover {
             color: var(--blue);
@@ -287,6 +297,22 @@
             flex: 1;
         }
 
+        .direct-checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff8f0;
+            border: 1px solid #f0d8a0;
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+        .direct-checkbox-row input {
+            width: auto;
+            margin: 0;
+        }
+
         .timeline-section {
             background: var(--light-bg);
             border-radius: var(--radius-sm);
@@ -343,7 +369,6 @@
             color: white;
             width: 100%;
             margin-top: 4px;
-            letter-spacing: 0.3px;
         }
         .btn-primary:hover {
             background: #005a8c;
@@ -467,7 +492,6 @@
             top: 0;
             color: var(--text-light);
             font-size: 9px;
-            letter-spacing: 0.3px;
         }
         tbody td {
             padding: 7px 6px;
@@ -477,7 +501,6 @@
         }
         tbody tr {
             transition: background 0.15s;
-            cursor: default;
         }
         tbody tr:hover {
             background: #f8fafc;
@@ -486,7 +509,6 @@
             background: #e8f4f8 !important;
             outline: 2px solid var(--blue);
             outline-offset: -2px;
-            border-radius: 4px;
         }
         tr.danger-row {
             background: var(--red-bg) !important;
@@ -565,15 +587,6 @@
         .badge-direct {
             background: #fff0e0;
             color: #e67e22;
-            font-size: 9px;
-        }
-        .badge-paused {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .badge-terminated {
-            background: #fce4e4;
-            color: #c0392b;
         }
         .material-status {
             font-weight: 600;
@@ -617,7 +630,6 @@
             color: var(--blue);
             padding: 7px 10px !important;
             border-bottom: 2px solid #d0dce8 !important;
-            letter-spacing: 0.3px;
         }
         .empty-state {
             text-align: center;
@@ -651,7 +663,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.4);
-            z-index: 1000;
+            z-index: 9999;
             justify-content: center;
             align-items: center;
         }
@@ -667,8 +679,6 @@
             max-height: 80vh;
             overflow-y: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            position: relative;
-            z-index: 1001;
         }
         .modal h3 {
             margin-bottom: 14px;
@@ -706,9 +716,6 @@
             font-size: 13px;
             color: var(--blue);
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
         .brand-card .info-row {
             font-size: 11px;
@@ -767,20 +774,6 @@
             top: 12px;
             right: 12px;
             z-index: 2;
-        }
-
-        .screenshot-reminder {
-            background: #fffdf0;
-            border: 1px solid #f0e080;
-            border-radius: var(--radius-sm);
-            padding: 10px 14px;
-            margin-bottom: 12px;
-            font-size: 11px;
-            color: #856404;
-            display: none;
-        }
-        .screenshot-reminder.show {
-            display: block;
         }
 
         .stat-panel {
@@ -844,22 +837,6 @@
             border-bottom: 1px solid #eee;
         }
 
-        .direct-checkbox-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #fff8f0;
-            border: 1px solid #f0d8a0;
-            border-radius: var(--radius-sm);
-            padding: 8px 12px;
-            margin-bottom: 8px;
-            font-size: 11px;
-        }
-        .direct-checkbox-row input {
-            width: auto;
-            margin: 0;
-        }
-
         @media (max-width: 900px) {
             .left-panel {
                 flex: 0 0 100%;
@@ -878,7 +855,7 @@
                 <h1>达人执行进度管理</h1>
                 <div class="subtitle">智能导入 · 节点提醒 · 快递素材追踪 · 数据筛查</div>
             </div>
-            <div class="header-right" id="todayDisplay">📅 加载中...</div>
+            <div class="header-right" id="todayDisplay">📅</div>
         </div>
 
         <div class="stats-bar">
@@ -894,10 +871,10 @@
 
         <div class="main-content" id="mainContent">
             <div class="left-panel" id="leftPanel">
-                <div class="panel-tabs" id="panelTabsContainer">
-                    <button class="panel-tab active" data-ptab="form">📝 表单</button>
-                    <button class="panel-tab" data-ptab="speech">💬 话术</button>
-                    <button class="panel-tab" data-ptab="brands">🏷️ 品牌</button>
+                <div class="panel-tabs">
+                    <button class="panel-tab active" data-ptab="form" id="panelTabForm">📝 表单</button>
+                    <button class="panel-tab" data-ptab="speech" id="panelTabSpeech">💬 话术</button>
+                    <button class="panel-tab" data-ptab="brands" id="panelTabBrands">🏷️ 品牌</button>
                 </div>
                 <div class="panel-content" id="panelForm">
                     <button class="btn btn-import" onclick="showImportModal()">📋 智能导入确认单</button>
@@ -1018,7 +995,7 @@
     <input type="file" id="restoreFileInput" accept=".json" style="display:none;" onchange="handleRestore(event)">
 
     <script>
-        // ============ STORAGE KEYS ============
+        // ============ STORAGE ============
         const STORAGE_KEY = 'creator_records_v10';
         const BRAND_INFO_KEY = 'brand_info_v1';
 
@@ -1028,27 +1005,16 @@
         let selectedRecordIndex = -1;
 
         // ============ UTILS ============
-        function getToday() {
-            const t = new Date();
-            t.setHours(0, 0, 0, 0);
-            return t;
-        }
-
-        function formatDateStr(d) {
-            if (!d) return '';
-            const p = new Date(d);
-            return `${p.getFullYear()}-${String(p.getMonth()+1).padStart(2,'0')}-${String(p.getDate()).padStart(2,'0')}`;
-        }
+        function getToday() { const t = new Date();
+            t.setHours(0, 0, 0, 0); return t; }
 
         function getTimelineNodes(creatorType) {
             if (creatorType === '图文达人')
                 return [{ key: 'outline', label: '大纲' }, { key: 'draft', label: '图文初稿' }, { key: 'publish',
-                    label: '发布时间' }
-                ];
+                label: '发布时间' }];
             if (creatorType === '视频达人')
                 return [{ key: 'outline', label: '大纲' }, { key: 'script', label: '脚本' }, { key: 'videoDraft',
-                    label: '视频初稿' }, { key: 'publish', label: '发布时间' }
-                ];
+                    label: '视频初稿' }, { key: 'publish', label: '发布时间' }];
             return [];
         }
 
@@ -1083,17 +1049,15 @@
             if (record.isDirect) {
                 const pubDate = getPublishDate(record);
                 if (!pubDate) return false;
-                const t = getToday();
                 const p = new Date(pubDate);
                 p.setHours(0, 0, 0, 0);
-                return p <= t;
+                return p <= getToday();
             }
             const pubDate = getPublishDate(record);
             if (!pubDate) return false;
-            const t = getToday();
             const p = new Date(pubDate);
             p.setHours(0, 0, 0, 0);
-            if (p > t) return false;
+            if (p > getToday()) return false;
             if (record.sentBack !== '是') return false;
             if (!record.trackingNumber || record.trackingNumber.trim() === '') return false;
             if (record.materialReceived !== '是') return false;
@@ -1175,7 +1139,7 @@
             const t = new Date();
             const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
             document.getElementById('todayDisplay').textContent =
-                `📅 ${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日 ${weekdays[t.getDay()]}`;
+                '📅 ' + t.getFullYear() + '年' + (t.getMonth() + 1) + '月' + t.getDate() + '日 ' + weekdays[t.getDay()];
         }
 
         // ============ FORM ============
@@ -1192,7 +1156,10 @@
             }
             const nodes = getTimelineNodes(type);
             container.innerHTML = nodes.map(n =>
-                `<div class="node-row"><span class="node-label">📌 ${n.label}</span><input type="date" class="node-date" id="node_${n.key}" placeholder="日期"><label style="font-size:10px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="done_${n.key}" onchange="toggleNodeDone('${n.key}')"> 完成</label></div>`
+                '<div class="node-row"><span class="node-label">📌 ' + n.label +
+                '</span><input type="date" class="node-date" id="node_' + n.key +
+                '" placeholder="日期"><label style="font-size:10px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="done_' +
+                n.key + '" onchange="toggleNodeDone(\'' + n.key + '\')"> 完成</label></div>'
                 ).join('');
         }
 
@@ -1213,8 +1180,8 @@
         }
 
         function onCoopStatusChange() {
-            const status = document.getElementById('coopStatus').value;
-            document.getElementById('pauseDateSection').style.display = status === '暂停' ? '' : 'none';
+            document.getElementById('pauseDateSection').style.display = document.getElementById('coopStatus').value ===
+                '暂停' ? '' : 'none';
         }
 
         function fillFormFromRecord(r) {
@@ -1224,7 +1191,7 @@
             document.getElementById('isDirect').checked = r.isDirect || false;
             onDirectChange();
             updateTimelineForm();
-            setTimeout(() => {
+            setTimeout(function() {
                 if (r.timeline)
                     for (const key in r.timeline) {
                         const de = document.getElementById('node_' + key),
@@ -1255,16 +1222,12 @@
             if (!type) return {};
             const isDirect = document.getElementById('isDirect').checked;
             if (isDirect) {
-                return {
-                    publish: {
-                        date: document.getElementById('node_publish')?.value || '',
-                        done: document.getElementById('done_publish')?.checked || false
-                    }
-                };
+                return { publish: { date: document.getElementById('node_publish')?.value || '', done: document
+                            .getElementById('done_publish')?.checked || false } };
             }
             const nodes = getTimelineNodes(type),
                 timeline = {};
-            nodes.forEach(n => { timeline[n.key] = { date: document.getElementById('node_' + n.key)?.value || '',
+            nodes.forEach(function(n) { timeline[n.key] = { date: document.getElementById('node_' + n.key)?.value || '',
                     done: document.getElementById('done_' + n.key)?.checked || false }; });
             return timeline;
         }
@@ -1283,7 +1246,7 @@
         function parseImport() {
             const text = document.getElementById('importText').value.trim();
             if (!text) { alert('请粘贴确认单内容'); return; }
-            const extract = p => { const m = text.match(p); return m ? m[1].trim() : ''; };
+            const extract = function(p) { const m = text.match(p); return m ? m[1].trim() : ''; };
             const nickname = extract(/合作达人[：:]\s*(.+)/) || extract(/账号[：:]\s*(.+)/) || extract(/达人昵称[：:]\s*(.+)/) ||
                 extract(/昵称[：:]\s*(.+)/);
             const platformStr = extract(/需求平台[：:]\s*(.+)/) || extract(/平台[：:]\s*(.+)/);
@@ -1295,19 +1258,17 @@
             const pdMatch = text.match(/发布档期[：:].*?(\d+\.\d+)/) || text.match(/最快发布档期[：:].*?(\d+\.\d+)/) || text
                 .match(/合作档期[：:]\s*(\d+\.\d+)/);
             let publishDate = '';
-            if (pdMatch) { const [m, d] = pdMatch[1].split('.'); const y = new Date().getFullYear();
-                publishDate = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`; }
-            const typeMatch = text.match(/视频裸价|报备视频/);
+            if (pdMatch) { const parts = pdMatch[1].split('.'); const y = new Date().getFullYear();
+                publishDate = y + '-' + parts[0].padStart(2, '0') + '-' + parts[1].padStart(2, '0'); }
             let creatorType = '';
-            if (typeMatch) creatorType = '视频达人';
+            if (text.match(/视频裸价|报备视频/)) creatorType = '视频达人';
             else if (text.match(/图文裸价|报备图文/)) creatorType = '图文达人';
             let platform = '';
             if (platformStr.includes('小红书')) platform = '小红书';
             else if (platformStr.includes('抖音')) platform = '抖音';
             else if (profileUrl.includes('xiaohongshu') || profileUrl.includes('xhslink')) platform = '小红书';
             else if (profileUrl.includes('douyin')) platform = '抖音';
-            const addrMatch = text.match(/收件地址[：:]\s*([\s\S]+?)(?:\n\n|\n[^\s]|$)/) || text.match(/收件地址[：:]?\s*([\s\S]+?)
-                $/);
+            const addrMatch = text.match(/收件地址[：:]\s*([\s\S]+?)(?:\n\n|\n[^\s]|$)/);
             let addrInfo = addrMatch ? addrMatch[1].replace(/\n/g, ' ').trim() : '';
             if (addrInfo && addrInfo.length > 200) addrInfo = addrInfo.substring(0, 200);
             const notesMatch = text.match(/【合作须知】([\s\S]+?)$/);
@@ -1323,8 +1284,8 @@
             if (creatorType) {
                 document.getElementById('creatorType').value = creatorType;
                 updateTimelineForm();
-                if (publishDate) setTimeout(() => { const pe = document.getElementById('node_publish'); if (pe) pe.value =
-                        publishDate; }, 100);
+                if (publishDate) setTimeout(function() { const pe = document.getElementById('node_publish'); if (pe) pe
+                        .value = publishDate; }, 100);
             }
             let fullNotes = '';
             if (addrInfo) fullNotes += '📮收件信息：' + addrInfo + '\n';
@@ -1336,8 +1297,8 @@
 
         // ============ PANEL TABS ============
         function switchPanelTab(ptab) {
-            document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
-            const targetBtn = document.querySelector(`.panel-tab[data-ptab="${ptab}"]`);
+            document.querySelectorAll('.panel-tab').forEach(function(b) { b.classList.remove('active'); });
+            const targetBtn = document.getElementById('panelTab' + ptab.charAt(0).toUpperCase() + ptab.slice(1));
             if (targetBtn) targetBtn.classList.add('active');
             document.getElementById('panelForm').classList.toggle('hidden', ptab !== 'form');
             document.getElementById('panelSpeech').classList.toggle('hidden', ptab !== 'speech');
@@ -1349,8 +1310,8 @@
         // ============ TOP TABS ============
         function switchTab(tab) {
             currentTab = tab;
-            document.querySelectorAll('.tabs-nav .tab-btn').forEach(b => b.classList.remove('active'));
-            const ab = document.querySelector(`.tabs-nav [data-tab="${CSS.escape(tab)}"]`);
+            document.querySelectorAll('.tabs-nav .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            const ab = document.querySelector('.tabs-nav [data-tab="' + tab + '"]');
             if (ab) ab.classList.add('active');
             if (tab === 'stats') {
                 document.getElementById('rightPanel').style.display = 'none';
@@ -1369,20 +1330,21 @@
 
         function renderTabs() {
             const records = getRecords(),
-                brands = [...new Set(records.map(r => r.brand))].sort(),
+                brands = [...new Set(records.map(function(r) { return r.brand; }))].sort(),
                 tabsNav = document.getElementById('tabsNav');
             let html =
-                `<button class="tab-btn urgent-tab${currentTab==='urgent'?' active':''}" data-tab="urgent">🔴 紧急提醒</button>`;
-            html +=
-                `<button class="tab-btn recycle-tab${currentTab==='recycle'?' active':''}" data-tab="recycle">📦 待回收</button>`;
-            html +=
-                `<button class="tab-btn stat-tab${currentTab==='stats'?' active':''}" data-tab="stats">📊 数据筛查</button>`;
-            brands.forEach(b => { const c = records.filter(r => r.brand === b).length;
-                html +=
-                    `<button class="tab-btn${currentTab===b?' active':''}" data-tab="${b}">${b}<span class="brand-count">${c}</span></button>`; });
+                '<button class="tab-btn urgent-tab' + (currentTab === 'urgent' ? ' active' : '') +
+                '" data-tab="urgent">🔴 紧急提醒</button>';
+            html += '<button class="tab-btn recycle-tab' + (currentTab === 'recycle' ? ' active' : '') +
+                '" data-tab="recycle">📦 待回收</button>';
+            html += '<button class="tab-btn stat-tab' + (currentTab === 'stats' ? ' active' : '') +
+                '" data-tab="stats">📊 数据筛查</button>';
+            brands.forEach(function(b) { const c = records.filter(function(r) { return r.brand === b; }).length;
+                html += '<button class="tab-btn' + (currentTab === b ? ' active' : '') + '" data-tab="' + b + '">' + b +
+                    '<span class="brand-count">' + c + '</span></button>'; });
             tabsNav.innerHTML = html;
-            tabsNav.querySelectorAll('.tab-btn').forEach(btn => { btn.addEventListener('click', function() { switchTab(this
-                        .dataset.tab); }); });
+            tabsNav.querySelectorAll('.tab-btn').forEach(function(btn) { btn.addEventListener('click', function() {
+                    switchTab(this.dataset.tab); }); });
         }
 
         function toggleDoneRows() { doneCollapsed = !doneCollapsed;
@@ -1400,7 +1362,7 @@
             if (currentTab === 'urgent') { tableTitle.textContent = '📊 紧急提醒 - 全部达人'; } else if (currentTab ===
                 'recycle') {
                 tableTitle.textContent = '📦 待回收 - 快递 & 素材';
-                filteredRecords = records.filter(r => {
+                filteredRecords = records.filter(function(r) {
                     if (r.isDirect) return false;
                     if (r.coopStatus === '已终止') return false;
                     if (isFullyCompleted(r)) return false;
@@ -1409,10 +1371,10 @@
                     return es === 'danger' || es === 'warning' || ms === 'danger' || ms === 'warning';
                 });
             } else if (currentTab !== 'stats') {
-                filteredRecords = records.filter(r => r.brand === currentTab);
-                tableTitle.textContent = `📊 ${currentTab} - 执行进度`;
+                filteredRecords = records.filter(function(r) { return r.brand === currentTab; });
+                tableTitle.textContent = '📊 ' + currentTab + ' - 执行进度';
             }
-            filteredRecords = filteredRecords.filter(r => {
+            filteredRecords = filteredRecords.filter(function(r) {
                 if (filterPlatform && r.platform !== filterPlatform) return false;
                 if (filterSearch) {
                     const inName = r.nickname.toLowerCase().includes(filterSearch);
@@ -1422,22 +1384,26 @@
                 }
                 return true;
             });
-            filteredRecords.sort((a, b) => { const pa = getSortPriority(a),
+            filteredRecords.sort(function(a, b) { const pa = getSortPriority(a),
                     pb = getSortPriority(b); if (pa.g !== pb.g) return pa.g - pb.g; return pa.k - pb.k; });
             const allNodeKeys = new Set();
-            filteredRecords.forEach(r => { getTimelineNodes(r.creatorType).forEach(n => allNodeKeys.add(n.key)); });
-            const nodeKeys = ['outline', 'script', 'draft', 'videoDraft', 'publish'].filter(k => allNodeKeys.has(k));
+            filteredRecords.forEach(function(r) { getTimelineNodes(r.creatorType).forEach(function(n) { allNodeKeys.add(n
+                        .key); }); });
+            const nodeKeys = ['outline', 'script', 'draft', 'videoDraft', 'publish'].filter(function(k) { return allNodeKeys
+                    .has(k); });
             const nodeLabels = { 'outline': '大纲', 'script': '脚本', 'draft': '图文初稿', 'videoDraft': '视频初稿',
                 'publish': '发布时间' };
-            document.getElementById('tableHead').innerHTML =
-                `<tr><th>昵称</th><th>平台</th><th>类型</th><th>品牌</th><th>粉丝</th><th>执行价</th>${nodeKeys.map(k=>`<th>${nodeLabels[k]}</th>`).join('')}<th>寄回</th><th>素材</th><th>备注</th><th>操作</th></tr>`;
+            let headHTML = '<tr><th>昵称</th><th>平台</th><th>类型</th><th>品牌</th><th>粉丝</th><th>执行价</th>';
+            nodeKeys.forEach(function(k) { headHTML += '<th>' + nodeLabels[k] + '</th>'; });
+            headHTML += '<th>寄回</th><th>素材</th><th>备注</th><th>操作</th></tr>';
+            document.getElementById('tableHead').innerHTML = headHTML;
             const tbody = document.getElementById('tableBody'),
                 colSpan = 6 + nodeKeys.length + 4;
-            if (filteredRecords.length === 0) { tbody.innerHTML =
-                `<tr><td colspan="${colSpan}" class="empty-state">暂无匹配记录 📝</td></tr>`; } else {
+            if (filteredRecords.length === 0) { tbody.innerHTML = '<tr><td colspan="' + colSpan +
+                    '" class="empty-state">暂无匹配记录 📝</td></tr>'; } else {
                 let html = '',
                     currentGroup = -1;
-                filteredRecords.forEach(r => {
+                filteredRecords.forEach(function(r) {
                     const status = getRecordOverallStatus(r),
                         realIndex = records.indexOf(r),
                         isHidden = doneCollapsed && (status === 'done' || status === 'paused' ||
@@ -1457,8 +1423,8 @@
                         currentGroup = 4; } else if (status === 'terminated' && currentGroup !== 5) { groupLabel =
                             '🚫 已终止';
                         currentGroup = 5; }
-                    if (groupLabel) html +=
-                        `<tr class="group-header"><td colspan="${colSpan}">${groupLabel}</td></tr>`;
+                    if (groupLabel) html += '<tr class="group-header"><td colspan="' + colSpan + '">' +
+                        groupLabel + '</td></tr>';
                     let rowClass = '';
                     if (status === 'danger') rowClass = 'danger-row';
                     else if (status === 'warning' || status === 'pause_ending') rowClass = 'warning-row';
@@ -1466,23 +1432,26 @@
                     else if (status === 'paused') rowClass = 'paused-row';
                     else if (status === 'terminated') rowClass = 'terminated-row';
                     let nodeCells = '';
-                    nodeKeys.forEach(key => {
+                    nodeKeys.forEach(function(key) {
                         const nd = r.timeline ? r.timeline[key] : null;
                         if (!nd || !nd.date) { nodeCells +=
                             '<td><span style="color:#ccc;">—</span></td>'; } else if (
                             nd.done) { nodeCells +=
-                            `<td><span class="node-cell node-done">✅ ${nd.date}</span></td>`; } else {
+                            '<td><span class="node-cell node-done">✅ ' + nd.date +
+                            '</span></td>'; } else {
                             const ns = getNodeStatus(nd.date);
                             if (ns === 'danger') { const od = Math.floor((getToday() - new Date(nd
                                     .date)) / (1000 * 60 * 60 * 24));
                                 nodeCells +=
-                                    `<td><span class="node-cell node-danger">⚠️ ${nd.date} (超${od}天)</span></td>`; } else if (
-                                    ns === 'warning') { const rd = Math.floor((new Date(nd.date) -
-                                        getToday()) / (1000 * 60 * 60 * 24));
+                                    '<td><span class="node-cell node-danger">⚠️ ' + nd.date +
+                                    ' (超' + od + '天)</span></td>'; } else if (ns === 'warning') { const rd = Math
+                                    .floor((new Date(nd.date) - getToday()) / (1000 * 60 * 60 *
+                                        24));
                                 const label = rd === 0 ? '今天到期' : '明天到期';
-                                nodeCells +=
-                                    `<td><span class="node-cell node-warning">⚡ ${nd.date} (${label})</span></td>`; } else { nodeCells +=
-                                    `<td><span class="node-cell node-normal">${nd.date}</span></td>`; }
+                                nodeCells += '<td><span class="node-cell node-warning">⚡ ' + nd.date +
+                                    ' (' + label + ')</span></td>'; } else { nodeCells +=
+                                    '<td><span class="node-cell node-normal">' + nd.date +
+                                    '</span></td>'; }
                         }
                     });
                     let expressBadge = '';
@@ -1509,23 +1478,38 @@
                     const noteText = r.notes || '',
                         noteDisplay = noteText.length > 15 ? noteText.substring(0, 15) + '...' : noteText;
                     let typeDisplay = r.creatorType;
-                    if (r.isDirect) typeDisplay +=
-                        ' <span class="badge badge-direct">⚡直发</span>';
+                    if (r.isDirect) typeDisplay += ' <span class="badge badge-direct">⚡直发</span>';
                     let pauseInfo = '';
                     if (r.coopStatus === '暂停') {
                         pauseInfo = ' ⏸️';
                         if (r.pauseEnd) pauseInfo += '至' + r.pauseEnd;
                     }
-                    html +=
-                        `<tr class="${rowClass}" data-index="${realIndex}"${realIndex===selectedRecordIndex?' style="background:#e8f4f8!important;outline:2px solid var(--blue);outline-offset:-2px;"':''}><td><strong class="clickable-name" onclick="selectRecord(${realIndex})" style="cursor:pointer;color:var(--blue);text-decoration:underline;text-underline-offset:3px;">${r.nickname}</strong>${r.profileUrl?` <a href="${r.profileUrl}" target="_blank" class="link-icon">🔗</a>`:''}${pauseInfo}</td><td>${r.platform}</td><td>${typeDisplay}</td><td><span class="badge badge-brand">${r.brand}</span></td><td>${r.followers||'—'}</td><td>${r.execPrice||'—'}</td>${nodeCells}<td>${expressBadge}</td><td>${materialBadge}</td><td><span class="note-cell" title="${noteText.replace(/"/g,'&quot;')}">${noteDisplay||'—'}</span></td><td><button class="btn btn-sm btn-edit" onclick="event.stopPropagation();editRecord(${realIndex})">✏️</button><button class="btn btn-sm btn-delete" onclick="event.stopPropagation();deleteRecord(${realIndex})">🗑️</button></td></tr>`;
+                    const selStyle = realIndex === selectedRecordIndex ?
+                        ' style="background:#e8f4f8!important;outline:2px solid var(--blue);outline-offset:-2px;"' :
+                        '';
+                    html += '<tr class="' + rowClass + '" data-index="' + realIndex + '"' + selStyle +
+                        '><td><strong class="clickable-name" onclick="selectRecord(' + realIndex +
+                        ')" style="cursor:pointer;color:var(--blue);text-decoration:underline;text-underline-offset:3px;">' +
+                        r.nickname + '</strong>' + (r.profileUrl ? ' <a href="' + r.profileUrl +
+                            '" target="_blank" class="link-icon">🔗</a>' : '') + pauseInfo + '</td><td>' + r.platform +
+                        '</td><td>' + typeDisplay + '</td><td><span class="badge badge-brand">' + r.brand +
+                        '</span></td><td>' + (r.followers || '—') + '</td><td>' + (r.execPrice || '—') + '</td>' +
+                        nodeCells + '<td>' + expressBadge + '</td><td>' + materialBadge +
+                        '</td><td><span class="note-cell" title="' + noteText.replace(/"/g, '&quot;') + '">' + (
+                            noteDisplay || '—') +
+                        '</span></td><td><button class="btn btn-sm btn-edit" onclick="event.stopPropagation();editRecord(' +
+                        realIndex +
+                        ')">✏️</button><button class="btn btn-sm btn-delete" onclick="event.stopPropagation();deleteRecord(' +
+                        realIndex + ')">🗑️</button></td></tr>';
                 });
                 if (doneCollapsed) {
-                    const hc = filteredRecords.filter(r => {
+                    const hc = filteredRecords.filter(function(r) {
                         const s = getRecordOverallStatus(r); return s === 'done' || s === 'paused' || s ===
                             'terminated';
                     }).length;
-                    if (hc > 0) html +=
-                        `<tr><td colspan="${colSpan}" style="text-align:center;color:#8c9aa8;padding:8px;font-size:10px;">📂 已折叠 ${hc} 条已完成/暂停/终止记录</td></tr>`;
+                    if (hc > 0) html += '<tr><td colspan="' + colSpan +
+                        '" style="text-align:center;color:#8c9aa8;padding:8px;font-size:10px;">📂 已折叠 ' + hc +
+                        ' 条已完成/暂停/终止记录</td></tr>';
                 }
                 tbody.innerHTML = html;
             }
@@ -1550,8 +1534,8 @@
             let dc = 0,
                 wc = 0,
                 oc = 0;
-            records.forEach(r => { const s = getRecordOverallStatus(r); if (s === 'danger') dc++; if (s === 'warning' ||
-                    s === 'pause_ending') wc++; if (s === 'done') oc++; });
+            records.forEach(function(r) { const s = getRecordOverallStatus(r); if (s === 'danger') dc++; if (s ===
+                    'warning' || s === 'pause_ending') wc++; if (s === 'done') oc++; });
             document.getElementById('statTotal').textContent = records.length;
             document.getElementById('statDanger').textContent = dc;
             document.getElementById('statWarning').textContent = wc;
@@ -1559,10 +1543,12 @@
         }
 
         function updateDatalists(records) {
-            const nn = [...new Set(records.map(r => r.nickname))].sort(),
-                bb = [...new Set(records.map(r => r.brand))].sort();
-            document.getElementById('nicknameList').innerHTML = nn.map(n => `<option value="${n}">`).join('');
-            document.getElementById('brandList').innerHTML = bb.map(b => `<option value="${b}">`).join('');
+            const nn = [...new Set(records.map(function(r) { return r.nickname; }))].sort(),
+                bb = [...new Set(records.map(function(r) { return r.brand; }))].sort();
+            document.getElementById('nicknameList').innerHTML = nn.map(function(n) { return '<option value="' + n +
+                    '">'; }).join('');
+            document.getElementById('brandList').innerHTML = bb.map(function(b) { return '<option value="' + b + '">'; })
+                .join('');
         }
 
         // ============ SPEECH ============
@@ -1589,20 +1575,20 @@
                 publishDate = (r.timeline['publish'] || {}).date || '';
             }
             if (r && r.publishDate && !publishDate) publishDate = r.publishDate;
-            const textSchedule =
-                `宝，排期给下哈：\n大纲：${outlineDate}\n图文：${draftDate}\n发布档期：${publishDate}\n‼️发布档期当天只能单发品牌一篇笔记\n寄出同步单号~\n‼️‼️未经品牌审核通过，擅自推进拍摄不合格的自行承担重拍后果`;
-            document.getElementById('speechSchedule').textContent = textSchedule;
-            const textScheduleVideo =
-                `宝，排期给下哈：\n大纲：${outlineDate}\n脚本：${scriptDate}\n视频初稿：${videoDraftDate}\n发布档期：${publishDate}\n‼️发布档期当天只能单发品牌一篇笔记\n寄出同步单号~\n‼️‼️未经品牌审核通过，擅自推进拍摄不合格的自行承担重拍后果`;
-            document.getElementById('speechScheduleVideoContent').textContent = textScheduleVideo;
+            document.getElementById('speechSchedule').textContent =
+                '宝，排期给下哈：\n大纲：' + outlineDate + '\n图文：' + draftDate + '\n发布档期：' + publishDate +
+                '\n‼️发布档期当天只能单发品牌一篇笔记\n寄出同步单号~\n‼️‼️未经品牌审核通过，擅自推进拍摄不合格的自行承担重拍后果';
+            document.getElementById('speechScheduleVideoContent').textContent =
+                '宝，排期给下哈：\n大纲：' + outlineDate + '\n脚本：' + scriptDate + '\n视频初稿：' + videoDraftDate + '\n发布档期：' +
+                publishDate + '\n‼️发布档期当天只能单发品牌一篇笔记\n寄出同步单号~\n‼️‼️未经品牌审核通过，擅自推进拍摄不合格的自行承担重拍后果';
             let brandAddr = '';
             if (r) {
                 const bi = getBrandInfo();
                 if (bi[r.brand] && bi[r.brand].address) brandAddr = bi[r.brand].address;
             }
-            const textReturn =
-                `宝子产品辛苦【顺丰到付】寄到这个地址（${brandAddr||'【品牌地址】'}）产品各个组件原封放回！！寄出前录下封箱视频丢群里~\n寄出后同步单号哈`;
-            document.getElementById('speechReturnContent').textContent = textReturn;
+            document.getElementById('speechReturnContent').textContent =
+                '宝子产品辛苦【顺丰到付】寄到这个地址（' + (brandAddr || '【品牌地址】') +
+                '）产品各个组件原封放回！！寄出前录下封箱视频丢群里~\n寄出后同步单号哈';
         }
 
         function copySpeech(type) {
@@ -1611,30 +1597,34 @@
             else if (type === 'scheduleVideo') text = document.getElementById('speechScheduleVideoContent').textContent;
             else if (type === 'return') text = document.getElementById('speechReturnContent').textContent;
             if (!text.trim()) { alert('请先在表格中选择一位达人'); return; }
-            navigator.clipboard.writeText(text).then(() => {
-                alert('✅ 已复制到剪贴板，可直接粘贴到群里');
-            }).catch(() => { alert('复制失败，请手动选中文字复制'); });
+            navigator.clipboard.writeText(text).then(function() { alert('✅ 已复制到剪贴板，可直接粘贴到群里'); }).catch(
+            function() { alert('复制失败，请手动选中文字复制'); });
         }
 
         // ============ BRAND CARDS ============
         function renderBrandCards() {
             const bi = getBrandInfo();
             const records = getRecords();
-            const allBrands = [...new Set([...records.map(r => r.brand), ...Object.keys(bi)])].filter(Boolean).sort();
+            const allBrands = [...new Set([...records.map(function(r) { return r.brand; }), ...Object.keys(bi)])].filter(
+                Boolean).sort();
             const container = document.getElementById('brandCardsContainer');
             if (allBrands.length === 0) { container.innerHTML =
                 '<p style="color:#8c9aa8;font-size:11px;">暂无品牌数据，保存达人记录后自动生成品牌卡片</p>'; return; }
             let html = '';
-            allBrands.forEach(brand => {
+            allBrands.forEach(function(brand) {
                 const info = bi[brand] || { address: '', notes: '' };
                 const brandKey = brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, '_');
-                html += `
-            <div class="brand-card">
-              <h4>🏷️ ${brand}</h4>
-              <div class="info-row"><span class="info-label">📍寄回地址：</span><span id="brandAddrDisplay_${brandKey}">${info.address||'未填写'}</span> <button class="btn btn-sm btn-copy" style="margin-left:6px;" onclick="copyBrandAddress('${brand.replace(/'/g,"\\'")}')">📋复制</button></div>
-              <div class="form-group" style="margin-top:6px;"><label>⚠️ 审核要点</label><textarea id="brandNotes_${brandKey}" onchange="saveBrandNotes('${brand.replace(/'/g,"\\'")}')">${info.notes||''}</textarea></div>
-              <div class="form-group"><label>📍 寄回地址</label><input type="text" id="brandAddr_${brandKey}" value="${info.address||''}" onchange="saveBrandAddr('${brand.replace(/'/g,"\\'")}', this.value)" placeholder="输入寄回地址"></div>
-            </div>`;
+                html += '<div class="brand-card"><h4>🏷️ ' + brand +
+                    '</h4><div class="info-row"><span class="info-label">📍寄回地址：</span><span id="brandAddrDisplay_' +
+                    brandKey + '">' + (info.address || '未填写') +
+                    '</span> <button class="btn btn-sm btn-copy" style="margin-left:6px;" onclick="copyBrandAddress(\'' +
+                    brand.replace(/'/g, "\\'") +
+                    '\')">📋复制</button></div><div class="form-group" style="margin-top:6px;"><label>⚠️ 审核要点</label><textarea id="brandNotes_' +
+                    brandKey + '" onchange="saveBrandNotes(\'' + brand.replace(/'/g, "\\'") + '\')">' + (info.notes ||
+                        '') +
+                    '</textarea></div><div class="form-group"><label>📍 寄回地址</label><input type="text" id="brandAddr_' +
+                    brandKey + '" value="' + (info.address || '') + '" onchange="saveBrandAddr(\'' + brand.replace(/'/g,
+                        "\\'") + '\', this.value)" placeholder="输入寄回地址"></div></div>';
             });
             container.innerHTML = html;
         }
@@ -1645,7 +1635,6 @@
             const el = document.getElementById('brandNotes_' + brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, '_'));
             if (el) bi[brand].notes = el.value;
             saveBrandInfo(bi);
-            updateSpeechFromSelection();
         }
 
         function saveBrandAddr(brand, value) {
@@ -1662,7 +1651,8 @@
             const bi = getBrandInfo();
             const addr = (bi[brand] && bi[brand].address) ? bi[brand].address : '';
             if (!addr) { alert('该品牌未填写寄回地址'); return; }
-            navigator.clipboard.writeText(addr).then(() => { alert('✅ 地址已复制'); }).catch(() => { alert('复制失败'); });
+            navigator.clipboard.writeText(addr).then(function() { alert('✅ 地址已复制'); }).catch(function() { alert(
+                '复制失败'); });
         }
 
         // ============ SCREENSHOT REMINDER ============
@@ -1673,8 +1663,8 @@
             const daysLeft = Math.floor((lastDayOfMonth - today) / (1000 * 60 * 60 * 24)) + 1;
             if (daysLeft > 5 || daysLeft < 0) { el.classList.remove('show'); return; }
             const records = getRecords();
-            const monthStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
-            const published = records.filter(r => {
+            const monthStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+            const published = records.filter(function(r) {
                 const pd = getPublishDate(r);
                 if (!pd) return false;
                 const p = new Date(pd);
@@ -1684,10 +1674,10 @@
             });
             if (published.length === 0) { el.classList.remove('show'); return; }
             const brandCounts = {};
-            published.forEach(r => { brandCounts[r.brand] = (brandCounts[r.brand] || 0) + 1; });
-            let detailStr = Object.entries(brandCounts).map(([b, c]) => `${b}：${c}条`).join(' · ');
-            el.innerHTML =
-                `📸 <strong>本月截图提醒</strong>（${monthStr}） — 已发布 <strong>${published.length}</strong> 条 | ${detailStr} | 请于月底前完成截图`;
+            published.forEach(function(r) { brandCounts[r.brand] = (brandCounts[r.brand] || 0) + 1; });
+            let detailStr = Object.entries(brandCounts).map(function(e) { return e[0] + '：' + e[1] + '条'; }).join(' · ');
+            el.innerHTML = '📸 <strong>本月截图提醒</strong>（' + monthStr + '） — 已发布 <strong>' + published.length +
+                '</strong> 条 | ' + detailStr + ' | 请于月底前完成截图';
             el.classList.add('show');
         }
 
@@ -1698,7 +1688,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `达人管理_备份_${new Date().toISOString().split('T')[0]}.json`;
+            a.download = '达人管理_备份_' + new Date().toISOString().split('T')[0] + '.json';
             a.click();
             URL.revokeObjectURL(url);
             alert('✅ 备份完成！文件已下载。');
@@ -1716,7 +1706,7 @@
                     if (data.records && Array.isArray(data.records)) {
                         saveRecords(data.records);
                         if (data.brandInfo) saveBrandInfo(data.brandInfo);
-                        alert(`✅ 恢复成功！共恢复 ${data.records.length} 条记录`);
+                        alert('✅ 恢复成功！共恢复 ' + data.records.length + ' 条记录');
                         location.reload();
                     } else { alert('文件格式不正确'); }
                 } catch (e) { alert('文件解析失败，请确认是备份文件'); }
@@ -1740,7 +1730,8 @@
 
         function downloadCSV(rows, filename) {
             const BOM = '\uFEFF',
-                csv = BOM + rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+                csv = BOM + rows.map(function(r) { return r.map(function(c) { return '"' + c + '"'; }).join(','); }).join(
+                    '\n');
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }),
                 url = URL.createObjectURL(blob),
                 a = document.createElement('a');
@@ -1757,8 +1748,8 @@
                 '图文初稿', '图文初稿完成', '视频初稿', '视频初稿完成', '发布时间', '发布时间完成', '寄出', '寄回', '单号', '素材', '合作状态', '备注',
                 '直发达人', '暂停开始', '暂停结束'
             ];
-            downloadCSV([headers, ...records.map(r => exportRecordToRow(r))],
-                `达人执行进度_${new Date().toISOString().split('T')[0]}.csv`);
+            downloadCSV([headers, ...records.map(function(r) { return exportRecordToRow(r); })],
+                '达人执行进度_' + new Date().toISOString().split('T')[0] + '.csv');
         }
 
         function importCSV() {
@@ -1771,7 +1762,7 @@
                 const reader = new FileReader();
                 reader.onload = function(ev) {
                     const text = ev.target.result,
-                        lines = text.split('\n').filter(l => l.trim());
+                        lines = text.split('\n').filter(function(l) { return l.trim(); });
                     if (lines.length < 2) { alert('CSV文件为空'); return; }
 
                     function parseCSVLine(line) {
@@ -1812,7 +1803,7 @@
                     renderTabs();
                     if (currentTab === 'stats') { buildStatFilters();
                         runStats(); } else renderTable();
-                    alert(`成功导入 ${newRecords.length} 条记录`);
+                    alert('成功导入 ' + newRecords.length + ' 条记录');
                 };
                 reader.readAsText(file, 'UTF-8');
             };
@@ -1823,12 +1814,12 @@
         function buildStatFilters() {
             const records = getRecords(),
                 months = new Set();
-            records.forEach(r => { const pd = getPublishDate(r); if (pd) months.add(pd.substring(0, 7)); });
+            records.forEach(function(r) { const pd = getPublishDate(r); if (pd) months.add(pd.substring(0, 7)); });
             document.getElementById('statMonth').innerHTML = '<option value="">全部月份</option>' + [...months].sort().map(
-                m => `<option value="${m}">${m}</option>`).join('');
-            const brands = [...new Set(records.map(r => r.brand))].sort();
-            document.getElementById('statBrand').innerHTML = '<option value="">全部品牌</option>' + brands.map(b =>
-                `<option value="${b}">${b}</option>`).join('');
+                function(m) { return '<option value="' + m + '">' + m + '</option>'; }).join('');
+            const brands = [...new Set(records.map(function(r) { return r.brand; }))].sort();
+            document.getElementById('statBrand').innerHTML = '<option value="">全部品牌</option>' + brands.map(function(b) {
+                return '<option value="' + b + '">' + b + '</option>'; }).join('');
         }
 
         function runStats() {
@@ -1837,27 +1828,30 @@
                 fb = document.getElementById('statBrand').value,
                 ft = document.getElementById('statType').value,
                 fp = document.getElementById('statPlatform').value;
-            let filtered = records.filter(r => { const pd = getPublishDate(r); if (fm && (!pd || !pd.startsWith(fm)))
-                    return false; if (fb && r.brand !== fb) return false; if (ft && r.creatorType !== ft) return
-                    false; if (fp && r.platform !== fp) return false; return true; });
+            let filtered = records.filter(function(r) { const pd = getPublishDate(r); if (fm && (!pd || !pd.startsWith(
+                    fm))) return false; if (fb && r.brand !== fb) return false; if (ft && r.creatorType !== ft)
+                    return false; if (fp && r.platform !== fp) return false; return true; });
             const total = filtered.length,
-                dc = filtered.filter(r => getRecordOverallStatus(r) === 'done').length,
+                dc = filtered.filter(function(r) { return getRecordOverallStatus(r) === 'done'; }).length,
                 ac = total - dc;
             const bc = {};
-            filtered.forEach(r => { bc[r.brand] = (bc[r.brand] || 0) + 1; });
+            filtered.forEach(function(r) { bc[r.brand] = (bc[r.brand] || 0) + 1; });
             const tc = {};
-            filtered.forEach(r => { tc[r.creatorType] = (tc[r.creatorType] || 0) + 1; });
+            filtered.forEach(function(r) { tc[r.creatorType] = (tc[r.creatorType] || 0) + 1; });
             document.getElementById('statResult').innerHTML =
-                `<div class="stat-result-card"><div class="big">${total}</div><div class="small">筛选结果</div></div><div class="stat-result-card"><div class="big" style="color:#27ae60;">${dc}</div><div class="small">已完成</div></div><div class="stat-result-card"><div class="big" style="color:#e74c3c;">${ac}</div><div class="small">进行中</div></div>`;
+                '<div class="stat-result-card"><div class="big">' + total +
+                '</div><div class="small">筛选结果</div></div><div class="stat-result-card"><div class="big" style="color:#27ae60;">' +
+                dc + '</div><div class="small">已完成</div></div><div class="stat-result-card"><div class="big" style="color:#e74c3c;">' +
+                ac + '</div><div class="small">进行中</div></div>';
             let dh =
                 '<h4 style="margin-bottom:8px;">品牌分布</h4><table class="stat-detail-table"><thead><tr><th>品牌</th><th>数量</th></tr></thead><tbody>';
-            Object.entries(bc).sort((a, b) => b[1] - a[1]).forEach(([b, c]) => { dh +=
-                `<tr><td>${b}</td><td>${c}</td></tr>`; });
+            Object.entries(bc).sort(function(a, b) { return b[1] - a[1]; }).forEach(function(e) { dh += '<tr><td>' + e[
+                    0] + '</td><td>' + e[1] + '</td></tr>'; });
             dh += '</tbody></table>';
             if (Object.keys(tc).length > 0) { dh +=
                 '<h4 style="margin:12px 0 8px;">类型分布</h4><table class="stat-detail-table"><thead><tr><th>类型</th><th>数量</th></tr></thead><tbody>';
-                Object.entries(tc).sort((a, b) => b[1] - a[1]).forEach(([t, c]) => { dh +=
-                    `<tr><td>${t}</td><td>${c}</td></tr>`; });
+                Object.entries(tc).sort(function(a, b) { return b[1] - a[1]; }).forEach(function(e) { dh += '<tr><td>' +
+                        e[0] + '</td><td>' + e[1] + '</td></tr>'; });
                 dh += '</tbody></table>'; }
             document.getElementById('statDetailTable').innerHTML = dh;
         }
@@ -1868,15 +1862,15 @@
                 fb = document.getElementById('statBrand').value,
                 ft = document.getElementById('statType').value,
                 fp = document.getElementById('statPlatform').value;
-            let filtered = records.filter(r => { const pd = getPublishDate(r); if (fm && (!pd || !pd.startsWith(fm)))
-                    return false; if (fb && r.brand !== fb) return false; if (ft && r.creatorType !== ft) return
-                    false; if (fp && r.platform !== fp) return false; return true; });
+            let filtered = records.filter(function(r) { const pd = getPublishDate(r); if (fm && (!pd || !pd.startsWith(
+                    fm))) return false; if (fb && r.brand !== fb) return false; if (ft && r.creatorType !== ft)
+                    return false; if (fp && r.platform !== fp) return false; return true; });
             if (filtered.length === 0) { alert('没有匹配数据'); return; }
             const headers = ['昵称', '平台', '类型', '品牌', '粉丝量', '执行价', '主页链接', '发布档期', '大纲', '大纲完成', '脚本', '脚本完成',
                 '图文初稿', '图文初稿完成', '视频初稿', '视频初稿完成', '发布时间', '发布时间完成', '寄出', '寄回', '单号', '素材', '合作状态', '备注'
             ];
-            downloadCSV([headers, ...filtered.map(r => exportRecordToRow(r))],
-                `数据筛查_${new Date().toISOString().split('T')[0]}.csv`);
+            downloadCSV([headers, ...filtered.map(function(r) { return exportRecordToRow(r); })],
+                '数据筛查_' + new Date().toISOString().split('T')[0] + '.csv');
         }
 
         // ============ CRUD ============
@@ -1982,24 +1976,25 @@
 
         // ============ INIT ============
         function init() {
+            // 日期显示
             updateTodayDisplay();
+
+            // 初始化表单
             updateTimelineForm();
+
+            // 渲染标签和表格
             renderTabs();
             renderTable();
             renderBrandCards();
             updateScreenshotReminder();
 
-            // Panel tab click handlers
-            document.querySelectorAll('.panel-tab').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    switchPanelTab(this.dataset.ptab);
-                });
-            });
+            // 面板标签点击事件
+            document.getElementById('panelTabForm').addEventListener('click', function() { switchPanelTab('form'); });
+            document.getElementById('panelTabSpeech').addEventListener('click', function() { switchPanelTab('speech'); });
+            document.getElementById('panelTabBrands').addEventListener('click', function() { switchPanelTab('brands'); });
 
-            // Set interval for auto refresh
-            setInterval(() => {
+            // 定时刷新
+            setInterval(function() {
                 updateTodayDisplay();
                 if (currentTab !== 'stats') renderTable();
                 updateScreenshotReminder();
