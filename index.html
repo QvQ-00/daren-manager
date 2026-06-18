@@ -48,7 +48,6 @@
             margin: 0 auto;
         }
 
-        /* Header */
         .header {
             background: linear-gradient(135deg, #0077BE 0%, #005a8c 100%);
             color: white;
@@ -79,7 +78,6 @@
             font-weight: 500;
         }
 
-        /* Stats */
         .stats-bar {
             display: flex;
             gap: 10px;
@@ -122,7 +120,6 @@
             color: var(--green);
         }
 
-        /* Tabs */
         .tabs-nav {
             display: flex;
             gap: 4px;
@@ -163,10 +160,10 @@
             color: white;
         }
         .tab-btn.recycle-tab {
-            color: var(--yellow);
+            color: #e67e22;
         }
         .tab-btn.recycle-tab.active {
-            background: var(--yellow);
+            background: #e67e22;
             color: white;
         }
         .tab-btn.stat-tab {
@@ -188,7 +185,6 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Main Layout */
         .main-content {
             display: flex;
             gap: 14px;
@@ -196,7 +192,6 @@
             align-items: flex-start;
         }
 
-        /* Left Panel */
         .left-panel {
             background: var(--white);
             border-radius: var(--radius);
@@ -211,6 +206,7 @@
             display: flex;
             border-bottom: 1px solid #eef1f5;
             background: #fafbfc;
+            cursor: pointer;
         }
         .panel-tab {
             flex: 1;
@@ -225,6 +221,9 @@
             transition: all 0.2s;
             text-align: center;
             border-bottom: 2px solid transparent;
+            position: relative;
+            z-index: 1;
+            pointer-events: auto;
         }
         .panel-tab:hover {
             color: var(--blue);
@@ -244,7 +243,6 @@
             display: none;
         }
 
-        /* Form */
         .form-group {
             margin-bottom: 10px;
         }
@@ -289,7 +287,6 @@
             flex: 1;
         }
 
-        /* Timeline */
         .timeline-section {
             background: var(--light-bg);
             border-radius: var(--radius-sm);
@@ -331,7 +328,6 @@
             border-color: var(--blue);
         }
 
-        /* Buttons */
         .btn {
             padding: 9px 16px;
             border: none;
@@ -420,7 +416,6 @@
             color: white;
         }
 
-        /* Right Panel */
         .right-panel {
             background: var(--white);
             border-radius: var(--radius);
@@ -526,7 +521,6 @@
             display: none;
         }
 
-        /* Node cells */
         .node-cell {
             display: inline-block;
             padding: 3px 7px;
@@ -649,7 +643,6 @@
             z-index: 10;
         }
 
-        /* Modal */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -674,6 +667,8 @@
             max-height: 80vh;
             overflow-y: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1001;
         }
         .modal h3 {
             margin-bottom: 14px;
@@ -700,7 +695,6 @@
             justify-content: flex-end;
         }
 
-        /* Brand Cards */
         .brand-card {
             background: var(--light-bg);
             border-radius: var(--radius-sm);
@@ -745,7 +739,6 @@
             border-color: var(--blue);
         }
 
-        /* Speech Template */
         .speech-card {
             background: #fafcfd;
             border-radius: var(--radius-sm);
@@ -773,9 +766,9 @@
             position: absolute;
             top: 12px;
             right: 12px;
+            z-index: 2;
         }
 
-        /* Screenshot reminder */
         .screenshot-reminder {
             background: #fffdf0;
             border: 1px solid #f0e080;
@@ -790,7 +783,6 @@
             display: block;
         }
 
-        /* Stats panel */
         .stat-panel {
             background: var(--white);
             padding: 20px;
@@ -852,7 +844,22 @@
             border-bottom: 1px solid #eee;
         }
 
-        /* Responsive */
+        .direct-checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff8f0;
+            border: 1px solid #f0d8a0;
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+        .direct-checkbox-row input {
+            width: auto;
+            margin: 0;
+        }
+
         @media (max-width: 900px) {
             .left-panel {
                 flex: 0 0 100%;
@@ -866,7 +873,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <div>
                 <h1>达人执行进度管理</h1>
@@ -875,7 +881,6 @@
             <div class="header-right" id="todayDisplay">📅 加载中...</div>
         </div>
 
-        <!-- Stats -->
         <div class="stats-bar">
             <div class="stat-card total"><div class="number" id="statTotal">0</div><div class="label">总任务数</div></div>
             <div class="stat-card danger"><div class="number" id="statDanger">0</div><div class="label">需处理</div></div>
@@ -883,22 +888,17 @@
             <div class="stat-card done"><div class="number" id="statDone">0</div><div class="label">已完成</div></div>
         </div>
 
-        <!-- Screenshot Reminder -->
         <div class="screenshot-reminder" id="screenshotReminder"></div>
 
-        <!-- Tabs -->
         <div class="tabs-nav" id="tabsNav"></div>
 
-        <!-- Main -->
         <div class="main-content" id="mainContent">
-            <!-- Left Panel -->
             <div class="left-panel" id="leftPanel">
-                <div class="panel-tabs">
+                <div class="panel-tabs" id="panelTabsContainer">
                     <button class="panel-tab active" data-ptab="form">📝 表单</button>
                     <button class="panel-tab" data-ptab="speech">💬 话术</button>
                     <button class="panel-tab" data-ptab="brands">🏷️ 品牌</button>
                 </div>
-                <!-- Form Panel -->
                 <div class="panel-content" id="panelForm">
                     <button class="btn btn-import" onclick="showImportModal()">📋 智能导入确认单</button>
                     <div class="form-group" style="margin-top:10px;">
@@ -919,10 +919,9 @@
                         <div class="form-group"><label>💰 执行价</label><input type="text" id="execPrice" placeholder="执行价格"></div>
                         <div class="form-group"><label>📅 发布档期</label><input type="date" id="publishDate"></div>
                     </div>
-                    <div class="form-group">
-                        <label style="display:flex;align-items:center;gap:6px;">
-                            <input type="checkbox" id="isDirect" onchange="onDirectChange()"> ⚡ 直发达人（品牌供稿，无需寄品，不回收素材）
-                        </label>
+                    <div class="direct-checkbox-row">
+                        <input type="checkbox" id="isDirect" onchange="onDirectChange()">
+                        <label for="isDirect" style="margin:0;cursor:pointer;">⚡ 直发达人（品牌供稿，无需寄品，不回收素材）</label>
                     </div>
                     <div class="timeline-section" id="timelineSection">
                         <h4>📅 节点时间线</h4>
@@ -938,7 +937,7 @@
                     <div id="expressSection">
                         <div class="form-group"><label>📦 是否已寄出给达人</label><select id="sentOut"><option value="否">否</option><option value="是">是</option></select></div>
                         <div class="form-group"><label>📬 达人是否寄回</label><select id="sentBack"><option value="否">否</option><option value="是">是</option></select></div>
-                        <div class="form-group"><label>🔢 寄回快递单号 *完成必填</label><input type="text" id="trackingNumber" placeholder="寄回单号（完成合作必填）"></div>
+                        <div class="form-group"><label>🔢 寄回快递单号 *完成必填</label><input type="text" id="trackingNumber" placeholder="寄回单号"></div>
                     </div>
                     <div class="form-group" id="materialSection"><label>📁 素材是否已给到</label><select id="materialReceived"><option value="否">否</option><option value="是">是</option></select></div>
                     <div class="form-group"><label>📝 备注</label><textarea id="notes" placeholder="收件地址、达人特殊需求等"></textarea></div>
@@ -946,41 +945,39 @@
                     <button class="btn btn-primary" onclick="saveRecord()">✅ 保存记录</button>
                     <button class="btn" style="background:#8c9aa8;color:white;width:100%;margin-top:4px;" onclick="cancelEdit()" id="btnCancel" hidden>取消编辑</button>
                 </div>
-                <!-- Speech Panel -->
                 <div class="panel-content hidden" id="panelSpeech">
                     <p style="font-size:10px;color:var(--text-light);margin-bottom:10px;">点击表格中达人名字选中，话术自动填入日期</p>
                     <div class="speech-card" id="speechScheduleText">
                         <h4>📅 拉档期话术（<span id="speechTypeLabel">图文达人</span>）</h4>
-                        <button class="btn btn-sm btn-copy" style="position:absolute;top:12px;right:12px;" onclick="copySpeech('schedule')">📋 复制</button>
+                        <button class="btn btn-sm btn-copy" onclick="copySpeech('schedule')">📋 复制</button>
                         <div class="speech-content" id="speechSchedule"></div>
                     </div>
                     <div class="speech-card" id="speechScheduleVideo" style="display:none;">
                         <h4>📅 拉档期话术（视频达人）</h4>
-                        <button class="btn btn-sm btn-copy" style="position:absolute;top:12px;right:12px;" onclick="copySpeech('scheduleVideo')">📋 复制</button>
+                        <button class="btn btn-sm btn-copy" onclick="copySpeech('scheduleVideo')">📋 复制</button>
                         <div class="speech-content" id="speechScheduleVideoContent"></div>
                     </div>
                     <div class="speech-card" id="speechReturn">
                         <h4>📦 寄回话术</h4>
-                        <button class="btn btn-sm btn-copy" style="position:absolute;top:12px;right:12px;" onclick="copySpeech('return')">📋 复制</button>
+                        <button class="btn btn-sm btn-copy" onclick="copySpeech('return')">📋 复制</button>
                         <div class="speech-content" id="speechReturnContent"></div>
                     </div>
                 </div>
-                <!-- Brands Panel -->
                 <div class="panel-content hidden" id="panelBrands">
                     <p style="font-size:10px;color:var(--text-light);margin-bottom:10px;">管理各品牌寄回地址与审核要点</p>
                     <div id="brandCardsContainer"></div>
                 </div>
             </div>
 
-            <!-- Right Panel -->
             <div class="right-panel" id="rightPanel">
                 <div class="panel-header">
                     <h3 id="tableTitle">📊 紧急提醒 - 全部达人</h3>
                     <div class="filter-bar">
                         <select id="filterPlatform" onchange="renderTable()"><option value="">全部平台</option><option value="抖音">抖音</option><option value="小红书">小红书</option></select>
                         <input type="text" id="filterSearch" placeholder="🔍 搜索昵称/备注..." oninput="renderTable()">
-                        <button class="btn btn-sm btn-toggle" onclick="toggleDoneRows()" id="btnToggleDone">📂 折叠已完成</button>
+                        <button class="btn btn-sm btn-toggle" onclick="toggleDoneRows()" id="btnToggleDone">📂 展开已完成/暂停/终止</button>
                         <button class="btn btn-sm btn-export" onclick="exportCSV()">📥 CSV导出</button>
+                        <button class="btn btn-sm btn-export" onclick="importCSV()">📥 CSV导入</button>
                         <button class="btn btn-sm" style="background:#e0edf5;color:var(--blue);" onclick="backupData()">💾 备份</button>
                         <button class="btn btn-sm" style="background:#e0edf5;color:var(--blue);" onclick="restoreData()">📥 恢复</button>
                         <button class="btn btn-sm btn-add" onclick="scrollToForm()">➕ 新增</button>
@@ -991,7 +988,6 @@
                 </div>
             </div>
 
-            <!-- Stats Panel -->
             <div class="stat-panel" id="statPanel" style="display:none;flex:1;min-width:700px;">
                 <h3>📊 数据筛查</h3>
                 <div class="stat-filters">
@@ -1007,7 +1003,6 @@
         </div>
     </div>
 
-    <!-- Import Modal -->
     <div class="modal-overlay" id="importModal">
         <div class="modal">
             <h3>📋 智能导入确认单</h3>
@@ -1020,24 +1015,40 @@
         </div>
     </div>
 
-    <!-- Hidden file input for restore -->
     <input type="file" id="restoreFileInput" accept=".json" style="display:none;" onchange="handleRestore(event)">
 
     <script>
+        // ============ STORAGE KEYS ============
         const STORAGE_KEY = 'creator_records_v10';
         const BRAND_INFO_KEY = 'brand_info_v1';
+
+        // ============ GLOBALS ============
         let currentTab = 'urgent';
         let doneCollapsed = true;
         let selectedRecordIndex = -1;
 
         // ============ UTILS ============
+        function getToday() {
+            const t = new Date();
+            t.setHours(0, 0, 0, 0);
+            return t;
+        }
+
+        function formatDateStr(d) {
+            if (!d) return '';
+            const p = new Date(d);
+            return `${p.getFullYear()}-${String(p.getMonth()+1).padStart(2,'0')}-${String(p.getDate()).padStart(2,'0')}`;
+        }
+
         function getTimelineNodes(creatorType) {
             if (creatorType === '图文达人')
-                return [{ key: 'outline', label: '大纲' }, { key: 'draft', label: '图文初稿' },
-                { key: 'publish', label: '发布时间' }];
+                return [{ key: 'outline', label: '大纲' }, { key: 'draft', label: '图文初稿' }, { key: 'publish',
+                    label: '发布时间' }
+                ];
             if (creatorType === '视频达人')
                 return [{ key: 'outline', label: '大纲' }, { key: 'script', label: '脚本' }, { key: 'videoDraft',
-                    label: '视频初稿' }, { key: 'publish', label: '发布时间' }];
+                    label: '视频初稿' }, { key: 'publish', label: '发布时间' }
+                ];
             return [];
         }
 
@@ -1048,12 +1059,6 @@
         function getBrandInfo() { const d = localStorage.getItem(BRAND_INFO_KEY); return d ? JSON.parse(d) : {}; }
 
         function saveBrandInfo(b) { localStorage.setItem(BRAND_INFO_KEY, JSON.stringify(b)); }
-
-        function getToday() { const t = new Date();
-            t.setHours(0, 0, 0, 0); return t; }
-
-        function formatDate(d) { if (!d) return '';
-            const p = new Date(d); return `${p.getFullYear()}-${String(p.getMonth()+1).padStart(2,'0')}-${String(p.getDate()).padStart(2,'0')}`; }
 
         function getNodeStatus(dateStr) {
             if (!dateStr) return 'empty';
@@ -1133,16 +1138,6 @@
                     pe.setHours(0, 0, 0, 0);
                     if (today > pe) return 'pause_ending';
                 }
-                if (record.pauseStart) {
-                    const ps = new Date(record.pauseStart);
-                    ps.setHours(0, 0, 0, 0);
-                    if (today >= ps) {
-                        if (!record.pauseEnd) return 'paused';
-                        const pe = new Date(record.pauseEnd);
-                        pe.setHours(0, 0, 0, 0);
-                        if (today <= pe) return 'paused';
-                    }
-                }
                 return 'paused';
             }
             if (isFullyCompleted(record)) return 'done';
@@ -1173,6 +1168,14 @@
             if (status === 'danger') return { g: 0, k: 0 };
             if (status === 'warning') return { g: 1, k: 1 };
             return { g: 2, k: 2 };
+        }
+
+        // ============ TODAY DISPLAY ============
+        function updateTodayDisplay() {
+            const t = new Date();
+            const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            document.getElementById('todayDisplay').textContent =
+                `📅 ${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日 ${weekdays[t.getDay()]}`;
         }
 
         // ============ FORM ============
@@ -1266,12 +1269,16 @@
             return timeline;
         }
 
-        // ============ IMPORT ============
-        function showImportModal() { document.getElementById('importModal').classList.add('show');
-            document.getElementById('importText').focus(); }
+        // ============ IMPORT MODAL ============
+        function showImportModal() {
+            document.getElementById('importModal').classList.add('show');
+            document.getElementById('importText').focus();
+        }
 
-        function closeImportModal() { document.getElementById('importModal').classList.remove('show');
-            document.getElementById('importText').value = ''; }
+        function closeImportModal() {
+            document.getElementById('importModal').classList.remove('show');
+            document.getElementById('importText').value = '';
+        }
 
         function parseImport() {
             const text = document.getElementById('importText').value.trim();
@@ -1327,7 +1334,19 @@
             document.getElementById('leftPanel').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ============ TABS ============
+        // ============ PANEL TABS ============
+        function switchPanelTab(ptab) {
+            document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
+            const targetBtn = document.querySelector(`.panel-tab[data-ptab="${ptab}"]`);
+            if (targetBtn) targetBtn.classList.add('active');
+            document.getElementById('panelForm').classList.toggle('hidden', ptab !== 'form');
+            document.getElementById('panelSpeech').classList.toggle('hidden', ptab !== 'speech');
+            document.getElementById('panelBrands').classList.toggle('hidden', ptab !== 'brands');
+            if (ptab === 'speech') updateSpeechFromSelection();
+            if (ptab === 'brands') renderBrandCards();
+        }
+
+        // ============ TOP TABS ============
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tabs-nav .tab-btn').forEach(b => b.classList.remove('active'));
@@ -1352,7 +1371,8 @@
             const records = getRecords(),
                 brands = [...new Set(records.map(r => r.brand))].sort(),
                 tabsNav = document.getElementById('tabsNav');
-            let html = `<button class="tab-btn urgent-tab${currentTab==='urgent'?' active':''}" data-tab="urgent">🔴 紧急提醒</button>`;
+            let html =
+                `<button class="tab-btn urgent-tab${currentTab==='urgent'?' active':''}" data-tab="urgent">🔴 紧急提醒</button>`;
             html +=
                 `<button class="tab-btn recycle-tab${currentTab==='recycle'?' active':''}" data-tab="recycle">📦 待回收</button>`;
             html +=
@@ -1426,19 +1446,17 @@
                     let groupLabel = '';
                     if (status === 'danger' && currentGroup !== 0) { groupLabel =
                             '🔴 需要处理 - 超期或快递/素材待回收';
-                        currentGroup = 0; } else if (status === 'warning' && currentGroup !== 1) { groupLabel =
-                            '🟡 需要关注 - 即将到期或等待回收';
-                        currentGroup = 1; } else if (status === 'pause_ending' && currentGroup !== 1) { groupLabel =
-                            '🟡 需要关注 - 暂停结束，请确认档期';
+                        currentGroup = 0; } else if ((status === 'warning' || status === 'pause_ending') &&
+                        currentGroup !== 1) { groupLabel = '🟡 需要关注 - 即将到期或等待回收';
                         currentGroup = 1; } else if (status === 'normal' && currentGroup !== 2) { groupLabel =
                             '🔵 正常进行中';
                         currentGroup = 2; } else if (status === 'paused' && currentGroup !== 3) { groupLabel =
                             '⏸️ 暂停中';
-                        currentGroup = 3; } else if (status === 'terminated' && currentGroup !== 5) { groupLabel =
-                            '🚫 已终止';
-                        currentGroup = 5; } else if (status === 'done' && currentGroup !== 4) { groupLabel =
+                        currentGroup = 3; } else if (status === 'done' && currentGroup !== 4) { groupLabel =
                             '✅ 全部完成';
-                        currentGroup = 4; }
+                        currentGroup = 4; } else if (status === 'terminated' && currentGroup !== 5) { groupLabel =
+                            '🚫 已终止';
+                        currentGroup = 5; }
                     if (groupLabel) html +=
                         `<tr class="group-header"><td colspan="${colSpan}">${groupLabel}</td></tr>`;
                     let rowClass = '';
@@ -1499,7 +1517,7 @@
                         if (r.pauseEnd) pauseInfo += '至' + r.pauseEnd;
                     }
                     html +=
-                        `<tr class="${rowClass}" data-index="${realIndex}"><td><strong class="clickable-name" onclick="selectRecord(${realIndex})" style="cursor:pointer;color:var(--blue);text-decoration:underline;text-underline-offset:3px;">${r.nickname}</strong>${r.profileUrl?` <a href="${r.profileUrl}" target="_blank" class="link-icon">🔗</a>`:''}${pauseInfo}</td><td>${r.platform}</td><td>${typeDisplay}</td><td><span class="badge badge-brand">${r.brand}</span></td><td>${r.followers||'—'}</td><td>${r.execPrice||'—'}</td>${nodeCells}<td>${expressBadge}</td><td>${materialBadge}</td><td><span class="note-cell" title="${noteText.replace(/"/g,'&quot;')}">${noteDisplay||'—'}</span></td><td><button class="btn btn-sm btn-edit" onclick="editRecord(${realIndex})">✏️</button><button class="btn btn-sm btn-delete" onclick="deleteRecord(${realIndex})">🗑️</button></td></tr>`;
+                        `<tr class="${rowClass}" data-index="${realIndex}"${realIndex===selectedRecordIndex?' style="background:#e8f4f8!important;outline:2px solid var(--blue);outline-offset:-2px;"':''}><td><strong class="clickable-name" onclick="selectRecord(${realIndex})" style="cursor:pointer;color:var(--blue);text-decoration:underline;text-underline-offset:3px;">${r.nickname}</strong>${r.profileUrl?` <a href="${r.profileUrl}" target="_blank" class="link-icon">🔗</a>`:''}${pauseInfo}</td><td>${r.platform}</td><td>${typeDisplay}</td><td><span class="badge badge-brand">${r.brand}</span></td><td>${r.followers||'—'}</td><td>${r.execPrice||'—'}</td>${nodeCells}<td>${expressBadge}</td><td>${materialBadge}</td><td><span class="note-cell" title="${noteText.replace(/"/g,'&quot;')}">${noteDisplay||'—'}</span></td><td><button class="btn btn-sm btn-edit" onclick="event.stopPropagation();editRecord(${realIndex})">✏️</button><button class="btn btn-sm btn-delete" onclick="event.stopPropagation();deleteRecord(${realIndex})">🗑️</button></td></tr>`;
                 });
                 if (doneCollapsed) {
                     const hc = filteredRecords.filter(r => {
@@ -1510,10 +1528,6 @@
                         `<tr><td colspan="${colSpan}" style="text-align:center;color:#8c9aa8;padding:8px;font-size:10px;">📂 已折叠 ${hc} 条已完成/暂停/终止记录</td></tr>`;
                 }
                 tbody.innerHTML = html;
-                if (selectedRecordIndex >= 0) {
-                    const selRow = tbody.querySelector(`tr[data-index="${selectedRecordIndex}"]`);
-                    if (selRow) selRow.classList.add('selected-row');
-                }
             }
             updateStats(records);
             renderTabs();
@@ -1524,17 +1538,12 @@
 
         function selectRecord(index) {
             selectedRecordIndex = index;
-            renderTable();
             const r = getRecords()[index];
             if (r) fillFormFromRecord(r);
             updateSpeechFromSelection();
+            renderTable();
+            switchPanelTab('speech');
             document.getElementById('leftPanel').scrollIntoView({ behavior: 'smooth' });
-            document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
-            const speechTab = document.querySelector('[data-ptab="speech"]');
-            if (speechTab) speechTab.classList.add('active');
-            document.getElementById('panelForm').classList.add('hidden');
-            document.getElementById('panelSpeech').classList.remove('hidden');
-            document.getElementById('panelBrands').classList.add('hidden');
         }
 
         function updateStats(records) {
@@ -1580,9 +1589,11 @@
                 publishDate = (r.timeline['publish'] || {}).date || '';
             }
             if (r && r.publishDate && !publishDate) publishDate = r.publishDate;
-            const textSchedule = `宝，排期给下哈：\n大纲：${outlineDate}\n图文：${draftDate}\n发布档期：${publishDate}\n‼️发布档期当天只能单发品牌一篇笔记\n寄出同步单号~\n‼️‼️未经品牌审核通过，擅自推进拍摄不合格的自行承担重拍后果`;
+            const textSchedule =
+                `宝，排期给下哈：\n大纲：${outlineDate}\n图文：${draftDate}\n发布档期：${publishDate}\n‼️发布档期当天只能单发品牌一篇笔记\n寄出同步单号~\n‼️‼️未经品牌审核通过，擅自推进拍摄不合格的自行承担重拍后果`;
             document.getElementById('speechSchedule').textContent = textSchedule;
-            const textScheduleVideo = `宝，排期给下哈：\n大纲：${outlineDate}\n脚本：${scriptDate}\n视频初稿：${videoDraftDate}\n发布档期：${publishDate}\n‼️发布档期当天只能单发品牌一篇笔记\n寄出同步单号~\n‼️‼️未经品牌审核通过，擅自推进拍摄不合格的自行承担重拍后果`;
+            const textScheduleVideo =
+                `宝，排期给下哈：\n大纲：${outlineDate}\n脚本：${scriptDate}\n视频初稿：${videoDraftDate}\n发布档期：${publishDate}\n‼️发布档期当天只能单发品牌一篇笔记\n寄出同步单号~\n‼️‼️未经品牌审核通过，擅自推进拍摄不合格的自行承担重拍后果`;
             document.getElementById('speechScheduleVideoContent').textContent = textScheduleVideo;
             let brandAddr = '';
             if (r) {
@@ -1616,12 +1627,13 @@
             let html = '';
             allBrands.forEach(brand => {
                 const info = bi[brand] || { address: '', notes: '' };
+                const brandKey = brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, '_');
                 html += `
             <div class="brand-card">
               <h4>🏷️ ${brand}</h4>
-              <div class="info-row"><span class="info-label">📍寄回地址：</span><span>${info.address||'未填写'}</span> <button class="btn btn-sm btn-copy" style="margin-left:6px;" onclick="copyBrandAddress('${brand.replace(/'/g,"\\'")}')">📋复制</button></div>
-              <div class="form-group" style="margin-top:6px;"><label>⚠️ 审核要点</label><textarea id="brandNotes_${brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g,'_')}" onchange="saveBrandNotes('${brand.replace(/'/g,"\\'")}')">${info.notes||''}</textarea></div>
-              <div class="form-group"><label>📍 寄回地址</label><input type="text" id="brandAddr_${brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g,'_')}" value="${info.address||''}" onchange="saveBrandAddr('${brand.replace(/'/g,"\\'")}')" placeholder="输入寄回地址"></div>
+              <div class="info-row"><span class="info-label">📍寄回地址：</span><span id="brandAddrDisplay_${brandKey}">${info.address||'未填写'}</span> <button class="btn btn-sm btn-copy" style="margin-left:6px;" onclick="copyBrandAddress('${brand.replace(/'/g,"\\'")}')">📋复制</button></div>
+              <div class="form-group" style="margin-top:6px;"><label>⚠️ 审核要点</label><textarea id="brandNotes_${brandKey}" onchange="saveBrandNotes('${brand.replace(/'/g,"\\'")}')">${info.notes||''}</textarea></div>
+              <div class="form-group"><label>📍 寄回地址</label><input type="text" id="brandAddr_${brandKey}" value="${info.address||''}" onchange="saveBrandAddr('${brand.replace(/'/g,"\\'")}', this.value)" placeholder="输入寄回地址"></div>
             </div>`;
             });
             container.innerHTML = html;
@@ -1636,12 +1648,13 @@
             updateSpeechFromSelection();
         }
 
-        function saveBrandAddr(brand) {
+        function saveBrandAddr(brand, value) {
             const bi = getBrandInfo();
             if (!bi[brand]) bi[brand] = { address: '', notes: '' };
-            const el = document.getElementById('brandAddr_' + brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, '_'));
-            if (el) bi[brand].address = el.value;
+            bi[brand].address = value;
             saveBrandInfo(bi);
+            const displayEl = document.getElementById('brandAddrDisplay_' + brand.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, '_'));
+            if (displayEl) displayEl.textContent = value || '未填写';
             updateSpeechFromSelection();
         }
 
@@ -1673,11 +1686,12 @@
             const brandCounts = {};
             published.forEach(r => { brandCounts[r.brand] = (brandCounts[r.brand] || 0) + 1; });
             let detailStr = Object.entries(brandCounts).map(([b, c]) => `${b}：${c}条`).join(' · ');
-            el.innerHTML = `📸 <strong>本月截图提醒</strong>（${monthStr}） — 已发布 <strong>${published.length}</strong> 条 | ${detailStr} | 请于月底前完成截图`;
+            el.innerHTML =
+                `📸 <strong>本月截图提醒</strong>（${monthStr}） — 已发布 <strong>${published.length}</strong> 条 | ${detailStr} | 请于月底前完成截图`;
             el.classList.add('show');
         }
 
-        // ============ BACKUP/RESTORE ============
+        // ============ BACKUP / RESTORE ============
         function backupData() {
             const data = { records: getRecords(), brandInfo: getBrandInfo(), exportedAt: new Date().toISOString() };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1909,11 +1923,7 @@
             selectedRecordIndex = index;
             fillFormFromRecord(r);
             document.getElementById('btnCancel').hidden = false;
-            document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
-            document.querySelector('[data-ptab="form"]').classList.add('active');
-            document.getElementById('panelForm').classList.remove('hidden');
-            document.getElementById('panelSpeech').classList.add('hidden');
-            document.getElementById('panelBrands').classList.add('hidden');
+            switchPanelTab('form');
             document.getElementById('leftPanel').scrollIntoView({ behavior: 'smooth' });
             renderTable();
         }
@@ -1929,7 +1939,7 @@
             document.getElementById('isDirect').checked = false;
             onDirectChange();
             document.getElementById('timelineNodes').innerHTML =
-            '<p style="color:#8c9aa8;font-size:11px;">请先选择达人类型</p>';
+                '<p style="color:#8c9aa8;font-size:11px;">请先选择达人类型</p>';
             document.getElementById('brand').value = '';
             document.getElementById('followers').value = '';
             document.getElementById('profileUrl').value = '';
@@ -1966,48 +1976,37 @@
             switchTab('urgent');
             selectedRecordIndex = -1;
             resetForm();
-            document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
-            document.querySelector('[data-ptab="form"]').classList.add('active');
-            document.getElementById('panelForm').classList.remove('hidden');
-            document.getElementById('panelSpeech').classList.add('hidden');
-            document.getElementById('panelBrands').classList.add('hidden');
+            switchPanelTab('form');
             document.getElementById('leftPanel').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ============ PANEL TABS ============
-        document.querySelectorAll('.panel-tab').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const ptab = this.dataset.ptab;
-                document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById('panelForm').classList.toggle('hidden', ptab !== 'form');
-                document.getElementById('panelSpeech').classList.toggle('hidden', ptab !== 'speech');
-                document.getElementById('panelBrands').classList.toggle('hidden', ptab !== 'brands');
-                if (ptab === 'speech') updateSpeechFromSelection();
-                if (ptab === 'brands') renderBrandCards();
-            });
-        });
+        // ============ INIT ============
+        function init() {
+            updateTodayDisplay();
+            updateTimelineForm();
+            renderTabs();
+            renderTable();
+            renderBrandCards();
+            updateScreenshotReminder();
 
-        // ============ TODAY DISPLAY ============
-        function updateTodayDisplay() {
-            const t = new Date();
-            const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-            document.getElementById('todayDisplay').textContent =
-                `📅 ${t.getFullYear()}年${t.getMonth()+1}月${t.getDate()}日 ${weekdays[t.getDay()]}`;
+            // Panel tab click handlers
+            document.querySelectorAll('.panel-tab').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    switchPanelTab(this.dataset.ptab);
+                });
+            });
+
+            // Set interval for auto refresh
+            setInterval(() => {
+                updateTodayDisplay();
+                if (currentTab !== 'stats') renderTable();
+                updateScreenshotReminder();
+            }, 60000);
         }
 
-        // ============ INIT ============
-        updateTodayDisplay();
-        updateTimelineForm();
-        renderTabs();
-        renderTable();
-        renderBrandCards();
-        updateScreenshotReminder();
-        setInterval(() => {
-            updateTodayDisplay();
-            if (currentTab !== 'stats') renderTable();
-            updateScreenshotReminder();
-        }, 60000);
+        init();
     </script>
 </body>
 </html>
